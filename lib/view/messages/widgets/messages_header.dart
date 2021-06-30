@@ -24,7 +24,7 @@ class MessagesHeader extends StatelessWidget {
         right: deviceData.screenWidth * 0.05,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           BackIcon(),
           Row(
@@ -33,16 +33,44 @@ class MessagesHeader extends StatelessWidget {
                 user: friend,
                 radius: 0.05,
               ),
-              SizedBox(width: deviceData.screenWidth * 0.035),
-              Text(
-                Functions.getFirstName(friend.name),
-                style: kArialFontStyle.copyWith(
-                  fontSize: deviceData.screenHeight * 0.022,
-                  color: Colors.white,
-                ),
+              SizedBox(width: deviceData.screenWidth * 0.025),
+              Column(
+                children: [
+                  Text(
+                    Functions.getFirstName(friend.name),
+                    style: kArialFontStyle.copyWith(
+                      fontSize: deviceData.screenHeight * 0.022,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: deviceData.screenHeight * 0.001),
+                  Text(
+                    "Online",
+                    style: kArialFontStyle.copyWith(
+                      fontSize: deviceData.screenHeight * 0.014,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
+
+          SizedBox(width: deviceData.screenWidth * 0.22),
+          Container(
+            width: deviceData.screenHeight * 0.05,
+            height: deviceData.screenHeight * 0.05,
+            decoration: ShapeDecoration(
+              shape: CircleBorder(),
+              color: Colors.white,
+            ),
+            child: Icon(
+            Icons.phone,
+            color: Color(0xFF4B0082),
+            size: deviceData.screenWidth * 0.058,
+          ),
+          ),
+          SizedBox(width: deviceData.screenWidth * 0.020),
           PopUpMenu(),
         ],
       ),

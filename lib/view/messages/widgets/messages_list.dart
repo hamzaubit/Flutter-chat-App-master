@@ -87,6 +87,7 @@ class _MessagesListState extends State<MessagesList> {
                                 friend: widget.friend,
                                 message: message.message,
                                 senderId: message.senderId,
+                                //yahn time or date show krwana hai database ki mada se
                               );
                             }),
                   ),
@@ -113,6 +114,20 @@ class _MessagesListState extends State<MessagesList> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   MessageInput(controller: _textController),
+                  SizedBox(width: deviceData.screenHeight * 0.020,),
+                  Container(
+                    padding: EdgeInsets.only(
+                        top: deviceData.screenHeight * 0.01,
+                        bottom: deviceData.screenHeight * 0.01,
+                        right: deviceData.screenWidth * 0.02),
+                    child: InkResponse(
+                      child: Icon(
+                        Icons.image,
+                        color: kBackgroundButtonColor,
+                        size: deviceData.screenWidth * 0.065,
+                      ),
+                  ),
+                  ),
                   SendIcon(
                     controller: _textController,
                     friendId: widget.friend.userId,
