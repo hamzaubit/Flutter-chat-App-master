@@ -17,15 +17,15 @@ class SigninEvent extends AccountEvent {
 }
 
 class SignupEvent extends AccountEvent {
-  final String email, username, password;
+  final String email, username, password,status;
   SignupEvent(
-      {@required this.username, @required this.email, @required this.password})
+      {@required this.username, @required this.email, @required this.password,this.status})
       : assert(email != null, "field must have value"),
         assert(username != null, "field must have value"),
         assert(password != null, "field must have value");
 
   @override
-  List<Object> get props => [email, password, username];
+  List<Object> get props => [email, password, username,status];
 }
 
 class IsSignedInEvent extends AccountEvent {}
@@ -35,8 +35,9 @@ class EditAccountEvent extends AccountEvent {
   final File photo;
   final String userId;
   final String imgUrl;
+  final String status;
   EditAccountEvent(
-      {@required this.userId, @required this.username, this.photo, this.imgUrl})
+      {@required this.userId, @required this.username, this.photo, this.imgUrl,this.status})
       : assert(username != null, "username should have value"),
         assert(userId != null, "username should have value");
   List<Object> get props => [username, photo];

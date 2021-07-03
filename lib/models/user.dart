@@ -23,6 +23,7 @@ class User extends Equatable {
   List<Object> get props => [name, email, imgUrl, imageType, userId];
 
   Map<String, dynamic> toMap() {
+
     return {
       'name': name,
       'email': email,

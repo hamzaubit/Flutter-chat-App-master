@@ -49,7 +49,7 @@ class _SignUpFormState extends State<SignUpForm>
                         inputType: TextInputType.multiline,
                         textCapitalization: TextCapitalization.words,
                         inputTitle: "Username",
-                        hintText: "Enter user name",
+                        hintText: "Enter username",
                         onSaved: (value) {
                           username = value;
                         },

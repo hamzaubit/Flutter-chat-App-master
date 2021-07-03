@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:chat/view/friends/widgets/avatar_button.dart';
 import 'package:chat/view/friends/widgets/back_icon.dart';
 import 'package:chat/view/widgets/popup_menu.dart';
 import 'package:chat/view/friends/widgets/search_widget.dart';
 import 'package:chat/view/utils/constants.dart';
 import 'package:chat/view/utils/device_config.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class FriendsHeader extends StatelessWidget {
+class FriendsHeader extends StatefulWidget {
   const FriendsHeader({
     Key key,
     @required this.editForm,
@@ -17,6 +22,83 @@ class FriendsHeader extends StatelessWidget {
   final bool editForm;
   final Function onBackPressed;
   final Function onAvatarPressed;
+
+  @override
+  _FriendsHeaderState createState() => _FriendsHeaderState();
+}
+
+class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserver {
+
+  bool changeStatus = true;
+  String uid;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  int _counter = 1;
+  Timer _timer;
+
+  void _startTimer(String status) {
+    _counter = 1;
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_counter > 0) {
+          _counter--;
+        } else {
+          _timer.cancel();
+          print("Created");
+          DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
+          Map<String , dynamic> userStatus = {
+            "status": status,
+          };
+          documentReference.setData(userStatus).whenComplete(()
+          {
+            print("Status Created");
+          });
+        }
+      });
+    });
+  }
+
+  void getUserId() async {
+    final FirebaseUser user = await auth.currentUser();
+    uid = user.uid;
+    print("User Id : "+uid.toString());
+  }
+
+  createData(String status){
+    print("Created");
+    DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
+    Map<String , dynamic> userStatus = {
+      "status": status,
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Status Created");
+    });
+  }
+
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    getUserId();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startTimer("Online"));
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.resumed){
+      createData("Online");
+    }
+    else{
+      createData("Offline");
+    }
+  }
+
+  @override
+  void dispose(){
+    createData("Offline");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +132,15 @@ class FriendsHeader extends StatelessWidget {
               children: <Widget>[
                 AnimatedSwitcher(
                   duration: Duration(milliseconds: 300),
-                  child: editForm
+                  child: widget.editForm
                       ? BackIcon(
                           onPressed: () =>
-                              onBackPressed != null ? onBackPressed() : null)
+                              widget.onBackPressed != null ? widget.onBackPressed() : null)
                       : SearchWidget(),
                 ),
                 AvatarButton(
                   onPressed: () =>
-                      onAvatarPressed != null ? onAvatarPressed() : null,
+                      widget.onAvatarPressed != null ? widget.onAvatarPressed() : null,
                 ),
               ],
             ),

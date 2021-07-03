@@ -29,8 +29,7 @@ class Functions {
 
   static bool modalIsShown = false;
 
-  static void showBottomMessage(BuildContext context, String message,
-      {bool isDismissible = true}) async {
+  static void showBottomMessage(BuildContext context, String message, {bool isDismissible = true}) async {
     final deviceData = DeviceData.init(context);
     print("message : " + message);
 

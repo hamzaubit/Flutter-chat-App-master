@@ -1,6 +1,7 @@
 import 'package:chat/utils/functions.dart';
 import 'package:chat/view/widgets/popup_menu.dart';
 import 'package:chat/view/utils/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chat/models/user.dart';
@@ -10,7 +11,7 @@ import 'package:chat/view/widgets/avatar_icon.dart';
 
 class MessagesHeader extends StatelessWidget {
   final User friend;
-  const MessagesHeader({Key key, @required this.friend}) : super(key: key);
+  const MessagesHeader({Key key, @required this.friend,}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,20 +44,22 @@ class MessagesHeader extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: deviceData.screenHeight * 0.001),
-                  Text(
-                    "Online",
-                    style: kArialFontStyle.copyWith(
-                      fontSize: deviceData.screenHeight * 0.014,
-                      color: Colors.white,
-                    ),
+                  SizedBox(height: deviceData.screenHeight * 0.003),
+                  StreamBuilder(
+                    stream: Firestore.instance.collection('userStatus').document(friend.userId).snapshots(),
+                    builder: (context, snapshot){
+                      if(!snapshot.hasData){
+                        Text( "Offline", style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
+                      }
+                      var userDocument = snapshot.data;
+                        return Text(userDocument['status'], style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
+                    }
                   ),
                 ],
               ),
             ],
           ),
-
-          SizedBox(width: deviceData.screenWidth * 0.22),
+          SizedBox(width: deviceData.screenWidth * 0.18),
           Container(
             width: deviceData.screenHeight * 0.05,
             height: deviceData.screenHeight * 0.05,
