@@ -1,4 +1,6 @@
+import 'package:chat/AudioCall/audioIndex.dart';
 import 'package:chat/utils/functions.dart';
+import 'package:chat/videoCall/index.dart';
 import 'package:chat/view/widgets/popup_menu.dart';
 import 'package:chat/view/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -49,7 +51,7 @@ class MessagesHeader extends StatelessWidget {
                     stream: Firestore.instance.collection('userStatus').document(friend.userId).snapshots(),
                     builder: (context, snapshot){
                       if(!snapshot.hasData){
-                        Text( "Offline", style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
+                        Text("Offline", style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
                       }
                       var userDocument = snapshot.data;
                         return Text(userDocument['status'], style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
@@ -60,21 +62,44 @@ class MessagesHeader extends StatelessWidget {
             ],
           ),
           SizedBox(width: deviceData.screenWidth * 0.18),
-          Container(
-            width: deviceData.screenHeight * 0.05,
-            height: deviceData.screenHeight * 0.05,
-            decoration: ShapeDecoration(
-              shape: CircleBorder(),
-              color: Colors.white,
+          GestureDetector(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));
+            },
+            child: Container(
+              width: deviceData.screenHeight * 0.05,
+              height: deviceData.screenHeight * 0.05,
+              decoration: ShapeDecoration(
+                shape: CircleBorder(),
+                color: Colors.white,
+              ),
+              child: Icon(
+              Icons.phone,
+              color: Color(0xFF4B0082),
+              size: deviceData.screenWidth * 0.058,
             ),
-            child: Icon(
-            Icons.phone,
-            color: Color(0xFF4B0082),
-            size: deviceData.screenWidth * 0.058,
-          ),
+            ),
           ),
           SizedBox(width: deviceData.screenWidth * 0.020),
-          PopUpMenu(),
+          GestureDetector(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => IndexPage()));
+            },
+            child: Container(
+              width: deviceData.screenHeight * 0.05,
+              height: deviceData.screenHeight * 0.05,
+              decoration: ShapeDecoration(
+                shape: CircleBorder(),
+                color: Colors.white,
+              ),
+              child: Icon(
+                Icons.video_call,
+                color: Color(0xFF4B0082),
+                size: deviceData.screenWidth * 0.058,
+              ),
+            ),
+          ),
+          //PopUpMenu(),
         ],
       ),
     );

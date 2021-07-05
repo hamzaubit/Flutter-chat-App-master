@@ -33,6 +33,8 @@ dependencies:
   data_connection_checker: ^0.3.4
   rxdart: ^0.24.1
   firebase_messaging: ^6.0.16
+  agora_rtc_engine:
+  permission_handler:
 dev_dependencies:
   flutter_test:
     sdk: flutter
