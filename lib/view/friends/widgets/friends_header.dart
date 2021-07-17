@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class FriendsHeader extends StatefulWidget {
   const FriendsHeader({
@@ -34,6 +35,17 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   final FirebaseAuth auth = FirebaseAuth.instance;
   int _counter = 1;
   Timer _timer;
+  String _timeString;
+  void _getTime() {
+    final DateTime now = DateTime.now();
+    final String formattedDateTime = _formatDateTime(now);
+    setState(() {
+      _timeString = formattedDateTime;
+    });
+  }
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('h:mm a | d MMM').format(dateTime);
+  }
 
   void _startTimer(String status) {
     _counter = 1;
@@ -79,6 +91,8 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   }
 
   void initState(){
+    _timeString = _formatDateTime(DateTime.now());
+    Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     getUserId();
@@ -91,7 +105,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       createData("Online");
     }
     else{
-      createData("Offline");
+      createData(_timeString.toString());
     }
   }
 

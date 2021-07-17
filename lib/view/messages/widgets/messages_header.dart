@@ -11,10 +11,15 @@ import 'package:chat/view/messages/widgets/back_icon.dart';
 import 'package:chat/view/utils/device_config.dart';
 import 'package:chat/view/widgets/avatar_icon.dart';
 
-class MessagesHeader extends StatelessWidget {
+class MessagesHeader extends StatefulWidget {
   final User friend;
   const MessagesHeader({Key key, @required this.friend,}) : super(key: key);
 
+  @override
+  _MessagesHeaderState createState() => _MessagesHeaderState();
+}
+
+class _MessagesHeaderState extends State<MessagesHeader> {
   @override
   Widget build(BuildContext context) {
     final deviceData = DeviceData.init(context);
@@ -33,14 +38,14 @@ class MessagesHeader extends StatelessWidget {
           Row(
             children: [
               AvatarIcon(
-                user: friend,
+                user: widget.friend,
                 radius: 0.05,
               ),
               SizedBox(width: deviceData.screenWidth * 0.025),
               Column(
                 children: [
                   Text(
-                    Functions.getFirstName(friend.name),
+                    Functions.getFirstName(widget.friend.name),
                     style: kArialFontStyle.copyWith(
                       fontSize: deviceData.screenHeight * 0.022,
                       color: Colors.white,
@@ -48,14 +53,15 @@ class MessagesHeader extends StatelessWidget {
                   ),
                   SizedBox(height: deviceData.screenHeight * 0.003),
                   StreamBuilder(
-                    stream: Firestore.instance.collection('userStatus').document(friend.userId).snapshots(),
-                    builder: (context, snapshot){
-                      if(!snapshot.hasData){
-                        Text("Offline", style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
-                      }
-                      var userDocument = snapshot.data;
+                      stream: Firestore.instance.collection('userStatus').document(widget.friend.userId).snapshots(),
+                      builder: (context, snapshot){
+                        if(!snapshot.hasData){
+                          var userDocument = snapshot.data;
+                          Text(userDocument['status'], style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
+                        }
+                        var userDocument = snapshot.data;
                         return Text(userDocument['status'], style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
-                    }
+                      }
                   ),
                 ],
               ),

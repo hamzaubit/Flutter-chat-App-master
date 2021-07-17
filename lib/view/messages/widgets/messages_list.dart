@@ -36,7 +36,7 @@ class _MessagesListState extends State<MessagesList> {
 
   void _scrollListener() {
     if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange &&
         !noMoreMessages) {
       context.bloc<MessagesBloc>().add(MoreMessagesFetched(
@@ -56,8 +56,8 @@ class _MessagesListState extends State<MessagesList> {
     DeviceData deviceData = DeviceData.init(context);
     return BlocConsumer<MessagesBloc, MessagesState>(
         listener: (context, state) {
-      _mapStateToActions(state);
-    }, builder: (_, state) {
+          _mapStateToActions(state);
+        }, builder: (_, state) {
       if (messages != null) {
         return Column(
           children: [
@@ -66,41 +66,41 @@ class _MessagesListState extends State<MessagesList> {
                 children: [
                   Padding(
                     padding:
-                        EdgeInsets.only(bottom: deviceData.screenHeight * 0.01),
+                    EdgeInsets.only(bottom: deviceData.screenHeight * 0.01),
                     child: messages.length < 1
                         ? Center(
-                            child: Text("No messages yet ",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: deviceData.screenHeight * 0.019,
-                                  color: kBackgroundButtonColor,
-                                )))
+                        child: Text("No messages yet ",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: deviceData.screenHeight * 0.019,
+                              color: kBackgroundButtonColor,
+                            )))
                         : ListView.builder(
-                            controller: _scrollController,
-                            reverse: true,
-                            itemCount: messages.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final message = messages[index];
-                              return MessageItem(
-                                showFriendImage:
-                                    _showFriendImage(message, index),
-                                friend: widget.friend,
-                                message: message.message,
-                                senderId: message.senderId,
-                                //yahn time or date show krwana hai database ki mada se
-                              );
-                            }),
+                        controller: _scrollController,
+                        reverse: true,
+                        itemCount: messages.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final message = messages[index];
+                          return MessageItem(
+                            showFriendImage:
+                            _showFriendImage(message, index),
+                            friend: widget.friend,
+                            message: message.message,
+                            senderId: message.senderId,
+                            //yahn time or date show krwana hai database ki mada se
+                          );
+                        }),
                   ),
                   state is MoreMessagesLoading
                       ? Padding(
-                          padding: EdgeInsets.only(
-                              top: deviceData.screenHeight * 0.01),
-                          child: Align(
-                              alignment: Alignment.topCenter,
-                              child: const CircleProgress(
-                                radius: 0.035,
-                              )),
-                        )
+                    padding: EdgeInsets.only(
+                        top: deviceData.screenHeight * 0.01),
+                    child: Align(
+                        alignment: Alignment.topCenter,
+                        child: const CircleProgress(
+                          radius: 0.035,
+                        )),
+                  )
                       : SizedBox.shrink()
                 ],
               ),
@@ -126,7 +126,7 @@ class _MessagesListState extends State<MessagesList> {
                         color: kBackgroundButtonColor,
                         size: deviceData.screenWidth * 0.065,
                       ),
-                  ),
+                    ),
                   ),
                   SendIcon(
                     controller: _textController,
