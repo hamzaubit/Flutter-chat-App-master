@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 import 'audioCall.dart';
 
 class audioIndexPage extends StatefulWidget {
@@ -122,7 +124,6 @@ class IndexState extends State<audioIndexPage> {
           : _validateError = false;
     });
     if (_channelController.text.isNotEmpty) {
-      // await for camera and mic permissions before pushing video page
       await _handleCameraAndMic(Permission.camera);
       await _handleCameraAndMic(Permission.microphone);
       // push video page with given channel name

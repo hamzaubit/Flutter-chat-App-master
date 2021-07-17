@@ -61,7 +61,7 @@ class MessagesHeader extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(width: deviceData.screenWidth * 0.18),
+          SizedBox(width: deviceData.screenWidth * 0.15),
           GestureDetector(
             onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));

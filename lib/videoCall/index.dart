@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import './call.dart';
+
+import 'call.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -113,7 +115,6 @@ class IndexState extends State<IndexPage> {
       ),
     );
   }
-
   Future<void> onJoin() async {
     // update input validation
     setState(() {
@@ -142,4 +143,6 @@ class IndexState extends State<IndexPage> {
     final status = await permission.request();
     print(status);
   }
+
 }
+
