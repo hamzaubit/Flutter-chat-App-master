@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/models/message.dart';
 import 'package:chat/models/user.dart';
 import 'package:chat/service_locator.dart';
@@ -12,6 +13,7 @@ import 'package:chat/view/widgets/progress_indicator.dart';
 import 'package:chat/view/widgets/try_again_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MessagesScreen extends StatefulWidget {
   final User friend;
@@ -28,8 +30,21 @@ class _MessageScreenState extends State<MessagesScreen> {
   DeviceData deviceData;
   bool showMessages = false;
   MessagesBloc messagesBloc;
+
+  void notify() async {
+    await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 1,
+          channelKey: "key1",
+          title: "New Message from SmartChat",
+          body: "tap to see",
+        )
+    );
+  }
+
   @override
   void initState() {
+    notify();
     messagesBloc = serviceLocator<MessagesBloc>();
     controller = TextEditingController();
     super.initState();

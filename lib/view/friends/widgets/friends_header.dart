@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/view/friends/widgets/avatar_button.dart';
 import 'package:chat/view/friends/widgets/back_icon.dart';
 import 'package:chat/view/widgets/popup_menu.dart';
@@ -11,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+
 
 class FriendsHeader extends StatefulWidget {
   const FriendsHeader({
@@ -45,6 +47,18 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   }
   String _formatDateTime(DateTime dateTime) {
     return DateFormat('h:mm a | d MMM').format(dateTime);
+  }
+
+  void notify() async {
+   await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 1,
+          channelKey: "key1",
+          title: "New Message from SmartChat",
+          body: "tap to see",
+
+        )
+    );
   }
 
   void _startTimer(String status) {
@@ -129,10 +143,15 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                "Let's Chat \nwith friends",
-                style: kTitleTextStyle.copyWith(
-                  fontSize: deviceData.screenHeight * 0.028,
+              GestureDetector(
+                onTap: (){
+                  notify();
+                },
+                child: Text(
+                  "Let's Chat \nwith friends",
+                  style: kTitleTextStyle.copyWith(
+                    fontSize: deviceData.screenHeight * 0.028,
+                  ),
                 ),
               ),
               PopUpMenu(),

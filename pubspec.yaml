@@ -39,6 +39,8 @@ dependencies:
   giphy_picker: ^1.0.6
   popup_menu: ^1.0.5
   intl: ^0.17.0
+  awesome_notifications:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
