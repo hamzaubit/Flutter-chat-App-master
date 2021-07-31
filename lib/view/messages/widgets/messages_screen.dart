@@ -11,9 +11,13 @@ import 'package:chat/view/widgets/footer.dart';
 import 'package:chat/view/messages/widgets/messages_list.dart';
 import 'package:chat/view/widgets/progress_indicator.dart';
 import 'package:chat/view/widgets/try_again_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 class MessagesScreen extends StatefulWidget {
   final User friend;
@@ -24,12 +28,13 @@ class MessagesScreen extends StatefulWidget {
   _MessageScreenState createState() => _MessageScreenState();
 }
 
-class _MessageScreenState extends State<MessagesScreen> {
+class _MessageScreenState extends State<MessagesScreen> with WidgetsBindingObserver {
   Future<List<Message>> messagesFuture;
   TextEditingController controller;
   DeviceData deviceData;
   bool showMessages = false;
   MessagesBloc messagesBloc;
+  bool changeStatus = true;
 
   void notify() async {
     await AwesomeNotifications().createNotification(
@@ -49,6 +54,7 @@ class _MessageScreenState extends State<MessagesScreen> {
     controller = TextEditingController();
     super.initState();
   }
+
 
   @override
   void dispose() {

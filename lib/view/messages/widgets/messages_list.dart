@@ -8,8 +8,13 @@ import 'package:chat/view/messages/widgets/send_icon.dart';
 import 'package:chat/view/utils/constants.dart';
 import 'package:chat/view/utils/device_config.dart';
 import 'package:chat/view/widgets/progress_indicator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
+
+import 'package:intl/intl.dart';
 
 class MessagesList extends StatefulWidget {
   final User friend;
@@ -21,14 +26,16 @@ class MessagesList extends StatefulWidget {
   _MessagesListState createState() => _MessagesListState();
 }
 
-class _MessagesListState extends State<MessagesList> {
+class _MessagesListState extends State<MessagesList> with WidgetsBindingObserver {
   TextEditingController _textController;
   List<Message> messages;
   ScrollController _scrollController = ScrollController();
   bool noMoreMessages = false;
+
+
+
   @override
   void initState() {
-    _textController = TextEditingController();
     _scrollController = ScrollController();
     _scrollController.addListener(() => _scrollListener());
     super.initState();
