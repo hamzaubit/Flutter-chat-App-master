@@ -1,4 +1,3 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/models/message.dart';
 import 'package:chat/models/user.dart';
 import 'package:chat/service_locator.dart';
@@ -36,20 +35,9 @@ class _MessageScreenState extends State<MessagesScreen> with WidgetsBindingObser
   MessagesBloc messagesBloc;
   bool changeStatus = true;
 
-  void notify() async {
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 1,
-          channelKey: "key1",
-          title: "New Message from SmartChat",
-          body: "tap to see",
-        )
-    );
-  }
 
   @override
   void initState() {
-    notify();
     messagesBloc = serviceLocator<MessagesBloc>();
     controller = TextEditingController();
     super.initState();

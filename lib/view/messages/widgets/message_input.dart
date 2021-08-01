@@ -1,16 +1,20 @@
 import 'dart:async';
 
+import 'package:chat/models/user.dart';
 import 'package:chat/view/utils/constants.dart';
 import 'package:chat/view/utils/device_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MessageInput extends StatefulWidget {
+  final User friend;
   const MessageInput({
     Key key,
     @required this.controller,
+    @required this.friend,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -20,13 +24,15 @@ class MessageInput extends StatefulWidget {
 }
 
 class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserver {
-
   bool changeStatus = true;
   String uid;
   final FirebaseAuth auth = FirebaseAuth.instance;
   int _counter = 1;
   Timer _timer;
   String _timeString;
+  String fcmToken;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   void _getTime() {
     final DateTime now = DateTime.now();
     final String formattedDateTime = _formatDateTime(now);
@@ -52,6 +58,7 @@ class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserve
           DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
           Map<String , dynamic> userStatus = {
             "status": status,
+            "token": fcmToken,
           };
           documentReference.setData(userStatus).whenComplete(()
           {
@@ -73,6 +80,7 @@ class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserve
     DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
     Map<String , dynamic> userStatus = {
       "status": status,
+      "token": fcmToken,
     };
     documentReference.setData(userStatus).whenComplete(()
     {
@@ -82,6 +90,10 @@ class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserve
 
   @override
   void initState() {
+    _firebaseMessaging.getToken().then((token){
+      fcmToken = token;
+      print("My Token :" +fcmToken);
+    });
     _timeString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     WidgetsBinding.instance.addObserver(this);

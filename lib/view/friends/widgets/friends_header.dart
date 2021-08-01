@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/view/friends/widgets/avatar_button.dart';
 import 'package:chat/view/friends/widgets/back_icon.dart';
 import 'package:chat/view/widgets/popup_menu.dart';
@@ -12,7 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class FriendsHeader extends StatefulWidget {
   const FriendsHeader({
@@ -38,6 +36,9 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   int _counter = 1;
   Timer _timer;
   String _timeString;
+  String fcmToken;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   void _getTime() {
     final DateTime now = DateTime.now();
     final String formattedDateTime = _formatDateTime(now);
@@ -47,18 +48,6 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   }
   String _formatDateTime(DateTime dateTime) {
     return DateFormat('h:mm a | d MMM').format(dateTime);
-  }
-
-  void notify() async {
-   await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 1,
-          channelKey: "key1",
-          title: "New Message from SmartChat",
-          body: "tap to see",
-
-        )
-    );
   }
 
   void _startTimer(String status) {
@@ -73,9 +62,11 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
         } else {
           _timer.cancel();
           print("Created");
+          //fcmTokenForNotification(fcmToken);
           DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
           Map<String , dynamic> userStatus = {
             "status": status,
+            "token": fcmToken,
           };
           documentReference.setData(userStatus).whenComplete(()
           {
@@ -93,18 +84,32 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   }
 
   createData(String status){
-    print("Created");
     DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
     Map<String , dynamic> userStatus = {
       "status": status,
+      "token": fcmToken,
     };
     documentReference.setData(userStatus).whenComplete(()
     {
       print("Status Created");
     });
   }
+  /*fcmTokenForNotification(String status){
+    DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
+    Map<String , dynamic> userStatus = {
+      "token": fcmToken,
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Token Created");
+    });
+  }*/
 
   void initState(){
+    _firebaseMessaging.getToken().then((token){
+      fcmToken = token;
+      print("My Token :" +fcmToken);
+    });
     _timeString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
@@ -145,7 +150,6 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
             children: <Widget>[
               GestureDetector(
                 onTap: (){
-                  notify();
                 },
                 child: Text(
                   "Let's Chat \nwith friends",
