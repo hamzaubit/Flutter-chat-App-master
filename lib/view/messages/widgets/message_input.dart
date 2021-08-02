@@ -8,9 +8,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:smart_reply/smart_reply.dart';
 
 class MessageInput extends StatefulWidget {
   final User friend;
+
   const MessageInput({
     Key key,
     @required this.controller,
@@ -23,7 +25,37 @@ class MessageInput extends StatefulWidget {
   _MessageInputState createState() => _MessageInputState();
 }
 
-class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserver {
+class _MessageInputState extends State<MessageInput>
+    with WidgetsBindingObserver {
+  var messages = [
+    TextMessage(
+      text: "How are you",
+      timestamp: DateTime.now(),
+      userId: 'wxyz1234',
+      isLocalUser: false,
+    ),
+  ];
+  bool _isLocalUser = true;
+
+  void suggestedReplies() async {
+    var suggestions = await SmartReply.suggestReplies(messages);
+    print("My Smart Reply Is : " + suggestions.toString());
+  }
+
+  void _sendMessage(String message) {
+    setState(() {
+      messages.add(TextMessage(
+          text: message,
+          timestamp: DateTime.now(),
+          userId: _isLocalUser ? 'a' : 'b',
+          isLocalUser: _isLocalUser));
+      _isLocalUser = !_isLocalUser;
+      widget.controller.clear();
+    });
+
+    suggestedReplies();
+  }
+
   bool changeStatus = true;
   String uid;
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -40,9 +72,11 @@ class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserve
       _timeString = formattedDateTime;
     });
   }
+
   String _formatDateTime(DateTime dateTime) {
     return DateFormat('h:mm a | d MMM').format(dateTime);
   }
+
   void _startTimer(String status) {
     _counter = 1;
     if (_timer != null) {
@@ -55,13 +89,13 @@ class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserve
         } else {
           _timer.cancel();
           print("Created");
-          DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
-          Map<String , dynamic> userStatus = {
+          DocumentReference documentReference =
+              Firestore.instance.collection("userStatus").document(uid);
+          Map<String, dynamic> userStatus = {
             "status": status,
             "token": fcmToken,
           };
-          documentReference.setData(userStatus).whenComplete(()
-          {
+          documentReference.setData(userStatus).whenComplete(() {
             print("Status Created");
           });
         }
@@ -72,27 +106,28 @@ class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserve
   void getUserId() async {
     final FirebaseUser user = await auth.currentUser();
     uid = user.uid;
-    print("User Id : "+uid.toString());
+    print("User Id : " + uid.toString());
   }
 
-  createData(String status){
+  createData(String status) {
     print("Created");
-    DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
-    Map<String , dynamic> userStatus = {
+    DocumentReference documentReference =
+        Firestore.instance.collection("userStatus").document(uid);
+    Map<String, dynamic> userStatus = {
       "status": status,
       "token": fcmToken,
     };
-    documentReference.setData(userStatus).whenComplete(()
-    {
+    documentReference.setData(userStatus).whenComplete(() {
       print("Status Created");
     });
   }
 
   @override
   void initState() {
-    _firebaseMessaging.getToken().then((token){
+    suggestedReplies();
+    _firebaseMessaging.getToken().then((token) {
       fcmToken = token;
-      print("My Token :" +fcmToken);
+      print("My Token :" + fcmToken);
     });
     _timeString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
@@ -101,13 +136,13 @@ class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserve
     WidgetsBinding.instance.addPostFrameCallback((_) => _startTimer("Online"));
     super.initState();
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(state == AppLifecycleState.resumed){
+    if (state == AppLifecycleState.resumed) {
       //createData("Online");
       print("Online");
-    }
-    else{
+    } else {
       createData(_timeString.toString());
     }
   }
@@ -115,47 +150,50 @@ class _MessageInputState extends State<MessageInput>  with WidgetsBindingObserve
   @override
   Widget build(BuildContext context) {
     final deviceData = DeviceData.init(context);
-    return Material(
-      elevation: 3.9,
-      borderRadius: BorderRadius.all(
-        Radius.circular(deviceData.screenWidth * 0.05),
-      ),
-      child: Container(
-        width: deviceData.screenWidth * 0.65,
-        child: TextField(
-          textCapitalization: TextCapitalization.sentences,
-          controller: widget.controller,
-          keyboardType: TextInputType.multiline,
-          maxLines: null,
-          textInputAction: TextInputAction.newline,
-          cursorColor: kBackgroundColor,
-          onChanged: (value){
-            if(value.isNotEmpty){
-              print("I m typing...");
-              createData("Typing...");
-            }
-            else if(value.isEmpty){
-              createData("Online");
-            }
-          },
-          style: TextStyle(
-            color: Colors.indigo[900],
-            fontSize: deviceData.screenHeight * 0.018,
+    return Column(
+      children: [
+        Material(
+          elevation: 3.9,
+          borderRadius: BorderRadius.all(
+            Radius.circular(deviceData.screenWidth * 0.05),
           ),
-          decoration: InputDecoration(
-            isDense: true,
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(
-                  Radius.circular(deviceData.screenWidth * 0.05)),
+          child: Container(
+            width: deviceData.screenWidth * 0.65,
+            child: TextField(
+              textCapitalization: TextCapitalization.sentences,
+              controller: widget.controller,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              textInputAction: TextInputAction.newline,
+              cursorColor: kBackgroundColor,
+              onChanged: (value) {
+                if (value.isNotEmpty) {
+                  print("I m typing...");
+                  createData("Typing...");
+                } else if (value.isEmpty) {
+                  createData("Online");
+                }
+              },
+              style: TextStyle(
+                color: Colors.indigo[900],
+                fontSize: deviceData.screenHeight * 0.018,
+              ),
+              decoration: InputDecoration(
+                isDense: true,
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(deviceData.screenWidth * 0.05)),
+                ),
+                hintText: "Type your message",
+                hintStyle: TextStyle(color: Colors.indigo[900]),
+              ),
             ),
-            hintText: "Type your message",
-            hintStyle: TextStyle(color: Colors.indigo[900]),
           ),
         ),
-      ),
+      ],
     );
   }
 }

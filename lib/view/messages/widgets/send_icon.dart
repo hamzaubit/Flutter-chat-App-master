@@ -1,10 +1,15 @@
 import 'package:chat/view/messages/bloc/messages_bloc.dart';
 import 'package:chat/view/utils/constants.dart';
 import 'package:chat/view/utils/device_config.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
 
-class SendIcon extends StatelessWidget {
+class SendIcon extends StatefulWidget {
   const SendIcon({
     Key key,
     @required this.controller,
@@ -13,6 +18,91 @@ class SendIcon extends StatelessWidget {
 
   final TextEditingController controller;
   final String friendId;
+
+  @override
+  _SendIconState createState() => _SendIconState();
+}
+
+class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
+  bool changeStatus = true;
+  String uid;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  int _counter = 1;
+  Timer _timer;
+  String _timeString;
+  String fcmToken;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  void _getTime() {
+    final DateTime now = DateTime.now();
+    final String formattedDateTime = _formatDateTime(now);
+    setState(() {
+      _timeString = formattedDateTime;
+    });
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('h:mm a | d MMM').format(dateTime);
+  }
+
+  void _startTimer(String status) {
+    _counter = 1;
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_counter > 0) {
+          _counter--;
+        } else {
+          _timer.cancel();
+          print("Created");
+          DocumentReference documentReference =
+          Firestore.instance.collection("userStatus").document(uid);
+          Map<String, dynamic> userStatus = {
+            "status": status,
+            "token": fcmToken,
+          };
+          documentReference.setData(userStatus).whenComplete(() {
+            print("Status Created");
+          });
+        }
+      });
+    });
+  }
+
+  void getUserId() async {
+    final FirebaseUser user = await auth.currentUser();
+    uid = user.uid;
+    print("User Id : " + uid.toString());
+  }
+
+  createData(String status) {
+    print("Created");
+    DocumentReference documentReference =
+    Firestore.instance.collection("userStatus").document(uid);
+    Map<String, dynamic> userStatus = {
+      "status": status,
+      "token": fcmToken,
+    };
+    documentReference.setData(userStatus).whenComplete(() {
+      print("Status Created");
+    });
+  }
+  @override
+  void initState() {
+    _firebaseMessaging.getToken().then((token) {
+      fcmToken = token;
+      print("My Token :" + fcmToken);
+    });
+    _timeString = _formatDateTime(DateTime.now());
+    Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+    WidgetsBinding.instance.addObserver(this);
+    getUserId();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startTimer("Online"));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceData = DeviceData.init(context);
@@ -29,9 +119,10 @@ class SendIcon extends StatelessWidget {
             size: deviceData.screenWidth * 0.065,
           ),
           onTap: () async {
-            if (controller.text.trim().isNotEmpty) {
+            if (widget.controller.text.trim().isNotEmpty) {
+              createData("Online");
                   BlocProvider.of<MessagesBloc>(context).add(
-                  MessageSent(message: controller.text, friendId: friendId));
+                  MessageSent(message: widget.controller.text, friendId: widget.friendId));
             }
           },
         ),

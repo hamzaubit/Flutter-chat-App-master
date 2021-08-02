@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chat/models/message.dart';
 import 'package:chat/models/user.dart';
 import 'package:chat/utils/functions.dart';
@@ -10,14 +12,15 @@ import 'package:chat/view/utils/device_config.dart';
 import 'package:chat/view/widgets/progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:async';
-
-import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import "dart:io";
 
 class MessagesList extends StatefulWidget {
   final User friend;
+
   MessagesList({
     @required this.friend,
   });
@@ -26,16 +29,26 @@ class MessagesList extends StatefulWidget {
   _MessagesListState createState() => _MessagesListState();
 }
 
-class _MessagesListState extends State<MessagesList> with WidgetsBindingObserver {
+class _MessagesListState extends State<MessagesList> {
   TextEditingController _textController;
   List<Message> messages;
   ScrollController _scrollController = ScrollController();
   bool noMoreMessages = false;
+  File smapleImage;
+  var url;
+  String uid;
 
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
+  void getUserId() async {
+    final FirebaseUser user = await auth.currentUser();
+    uid = user.uid;
+    print("User Id : " + uid.toString());
+  }
 
   @override
   void initState() {
+    _textController = TextEditingController();
     _scrollController = ScrollController();
     _scrollController.addListener(() => _scrollListener());
     super.initState();
@@ -50,6 +63,53 @@ class _MessagesListState extends State<MessagesList> with WidgetsBindingObserver
           _scrollController.position.pixels, messages.length));
     }
   }
+
+  /*String _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
+  Future getImage() async {
+    var imagePicker = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      smapleImage = imagePicker;
+      uploadImage();
+      //forDisableButton = true;
+    });
+  }
+
+  Future uploadImage() async {
+    //SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() async {
+      final StorageReference firebaseStorageRef =
+      FirebaseStorage.instance.ref().child(getRandomString(28));
+      final StorageUploadTask task = firebaseStorageRef.putFile(smapleImage);
+      url = await (await task.onComplete).ref.getDownloadURL();
+      print(url);
+      print("Image uploaded on Firebase Storage");
+      mediaMessage();
+    });
+  }
+
+  mediaMessage() {
+    DocumentReference documentReference = Firestore.instance
+        .collection("users")
+        .document(widget.friend.userId)
+        .collection("contacts")
+        .document(uid)
+        .collection("messages")
+        .document();
+    Map<String, dynamic> students = {
+      "image": url,
+      "senderId": uid,
+      "receivedBy": widget.friend.name,
+    };
+    documentReference.setData(students).whenComplete(() {
+      print("Media MessageCreated");
+    });
+  }*/
 
   @override
   void dispose() {
@@ -114,6 +174,7 @@ class _MessagesListState extends State<MessagesList> with WidgetsBindingObserver
             ),
             Padding(
               padding: EdgeInsets.only(
+                top: deviceData.screenHeight * 0.02,
                 bottom: deviceData.screenHeight * 0.02,
                 left: deviceData.screenWidth * 0.07,
               ),
@@ -121,17 +182,25 @@ class _MessagesListState extends State<MessagesList> with WidgetsBindingObserver
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   MessageInput(controller: _textController),
-                  SizedBox(width: deviceData.screenHeight * 0.020,),
-                  Container(
-                    padding: EdgeInsets.only(
-                        top: deviceData.screenHeight * 0.01,
-                        bottom: deviceData.screenHeight * 0.01,
-                        right: deviceData.screenWidth * 0.02),
-                    child: InkResponse(
-                      child: Icon(
-                        Icons.image,
-                        color: kBackgroundButtonColor,
-                        size: deviceData.screenWidth * 0.065,
+                  SizedBox(
+                    width: deviceData.screenHeight * 0.020,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      getUserId();
+                      //getImage();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          top: deviceData.screenHeight * 0.01,
+                          bottom: deviceData.screenHeight * 0.01,
+                          right: deviceData.screenWidth * 0.02),
+                      child: InkResponse(
+                        child: Icon(
+                          Icons.image,
+                          color: kBackgroundButtonColor,
+                          size: deviceData.screenWidth * 0.065,
+                        ),
                       ),
                     ),
                   ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:chat/view/friends/widgets/avatar_button.dart';
 import 'package:chat/view/friends/widgets/back_icon.dart';
+import 'package:chat/view/messages/widgets/message_input.dart';
 import 'package:chat/view/widgets/popup_menu.dart';
 import 'package:chat/view/friends/widgets/search_widget.dart';
 import 'package:chat/view/utils/constants.dart';
@@ -152,7 +153,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                 onTap: (){
                 },
                 child: Text(
-                  "Let's Chat \nwith friends",
+                  "Let's Chat \nwith SmartChat",
                   style: kTitleTextStyle.copyWith(
                     fontSize: deviceData.screenHeight * 0.028,
                   ),

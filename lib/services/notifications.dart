@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:chat/my_app.dart';
+import 'package:chat/view/friends/widgets/friends_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -153,10 +154,18 @@ class _PushMessagingExampleState extends State<PushMessagingExample> {
       },
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
+        /*final data = message['data'];
+        if(data['click_action'] != null){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => FriendsScreen()));
+        }*/
         _navigateToItemDetail(message);
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
+        /*final data = message['data'];
+        if(data['click_action'] != null){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => FriendsScreen()));
+        }*/
         _navigateToItemDetail(message);
       },
     );
