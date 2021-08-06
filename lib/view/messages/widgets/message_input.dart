@@ -27,34 +27,6 @@ class MessageInput extends StatefulWidget {
 
 class _MessageInputState extends State<MessageInput>
     with WidgetsBindingObserver {
-  var messages = [
-    TextMessage(
-      text: "How are you",
-      timestamp: DateTime.now(),
-      userId: 'wxyz1234',
-      isLocalUser: false,
-    ),
-  ];
-  bool _isLocalUser = true;
-
-  void suggestedReplies() async {
-    var suggestions = await SmartReply.suggestReplies(messages);
-    print("My Smart Reply Is : " + suggestions.toString());
-  }
-
-  void _sendMessage(String message) {
-    setState(() {
-      messages.add(TextMessage(
-          text: message,
-          timestamp: DateTime.now(),
-          userId: _isLocalUser ? 'a' : 'b',
-          isLocalUser: _isLocalUser));
-      _isLocalUser = !_isLocalUser;
-      widget.controller.clear();
-    });
-
-    suggestedReplies();
-  }
 
   bool changeStatus = true;
   String uid;
@@ -124,7 +96,6 @@ class _MessageInputState extends State<MessageInput>
 
   @override
   void initState() {
-    suggestedReplies();
     _firebaseMessaging.getToken().then((token) {
       fcmToken = token;
       print("My Token :" + fcmToken);
@@ -150,50 +121,46 @@ class _MessageInputState extends State<MessageInput>
   @override
   Widget build(BuildContext context) {
     final deviceData = DeviceData.init(context);
-    return Column(
-      children: [
-        Material(
-          elevation: 3.9,
-          borderRadius: BorderRadius.all(
-            Radius.circular(deviceData.screenWidth * 0.05),
+    return Material(
+      elevation: 3.9,
+      borderRadius: BorderRadius.all(
+        Radius.circular(deviceData.screenWidth * 0.05),
+      ),
+      child: Container(
+        width: deviceData.screenWidth * 0.65,
+        child: TextField(
+          textCapitalization: TextCapitalization.sentences,
+          controller: widget.controller,
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          textInputAction: TextInputAction.newline,
+          cursorColor: kBackgroundColor,
+          onChanged: (value) {
+            if (value.isNotEmpty) {
+              print("I m typing...");
+              createData("Typing...");
+            } else if (value.isEmpty) {
+              createData("Online");
+            }
+          },
+          style: TextStyle(
+            color: Colors.indigo[900],
+            fontSize: deviceData.screenHeight * 0.018,
           ),
-          child: Container(
-            width: deviceData.screenWidth * 0.65,
-            child: TextField(
-              textCapitalization: TextCapitalization.sentences,
-              controller: widget.controller,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              textInputAction: TextInputAction.newline,
-              cursorColor: kBackgroundColor,
-              onChanged: (value) {
-                if (value.isNotEmpty) {
-                  print("I m typing...");
-                  createData("Typing...");
-                } else if (value.isEmpty) {
-                  createData("Online");
-                }
-              },
-              style: TextStyle(
-                color: Colors.indigo[900],
-                fontSize: deviceData.screenHeight * 0.018,
-              ),
-              decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(deviceData.screenWidth * 0.05)),
-                ),
-                hintText: "Type your message",
-                hintStyle: TextStyle(color: Colors.indigo[900]),
-              ),
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(
+                  Radius.circular(deviceData.screenWidth * 0.05)),
             ),
+            hintText: "Type your message",
+            hintStyle: TextStyle(color: Colors.indigo[900]),
           ),
         ),
-      ],
+      ),
     );
   }
 }

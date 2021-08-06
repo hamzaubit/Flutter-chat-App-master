@@ -39,6 +39,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   String _timeString;
   String fcmToken;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  String oneSignalAppId = "36ea0ab1-4b23-4a4a-b5f0-c78ef4dc76b5";
 
   void _getTime() {
     final DateTime now = DateTime.now();
@@ -105,8 +106,14 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       print("Token Created");
     });
   }*/
+  /*void configOneSignel()
+  {
+    OneSignal.shared
+        .setAppId(oneSignalAppId);
+  }*/
 
   void initState(){
+    //configOneSignel();
     _firebaseMessaging.getToken().then((token){
       fcmToken = token;
       print("My Token :" +fcmToken);

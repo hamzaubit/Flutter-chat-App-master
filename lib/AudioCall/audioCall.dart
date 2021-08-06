@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:chat/videoCall/settings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 
@@ -36,9 +36,14 @@ class _audioCallPageState extends State<audioCallPage> {
     _engine.destroy();
     super.dispose();
   }
+  getcallingID() async {
+    var document = await Firestore.instance.collection('audio_video').document('SmartChat');
+    print(document);
+  }
 
   @override
   void initState() {
+    getcallingID();
     super.initState();
     // initialize agora sdk
     initialize();

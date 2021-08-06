@@ -18,7 +18,7 @@ class CircleProgress extends StatelessWidget {
       height: radius == null ? deviceData.screenHeight * 0.045 : deviceData.screenHeight * radius ,
       child: CircularProgressIndicator(
         strokeWidth: deviceData.screenWidth * 0.007,
-        backgroundColor: kBackgroundButtonColor,
+        color: kBackgroundButtonColor,
       ),
     );
   }

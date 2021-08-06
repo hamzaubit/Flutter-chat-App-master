@@ -13,7 +13,7 @@ class audioIndexPage extends StatefulWidget {
 
 class IndexState extends State<audioIndexPage> {
   /// create a channelController to retrieve text value
-  final _channelController = TextEditingController(text: "Smartchat&4");
+  final _channelController = TextEditingController(text: "SmartChat");
 
   /// if channel textField is validated to have error
   bool _validateError = false;

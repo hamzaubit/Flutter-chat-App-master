@@ -64,7 +64,7 @@ class _MessagesListState extends State<MessagesList> {
     }
   }
 
-  /*String _chars =
+  String _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   Random _rnd = Random();
 
@@ -100,7 +100,7 @@ class _MessagesListState extends State<MessagesList> {
         .collection("contacts")
         .document(uid)
         .collection("messages")
-        .document();
+        .document("${DateTime.now().toUtc().millisecondsSinceEpoch}");
     Map<String, dynamic> students = {
       "image": url,
       "senderId": uid,
@@ -109,7 +109,7 @@ class _MessagesListState extends State<MessagesList> {
     documentReference.setData(students).whenComplete(() {
       print("Media MessageCreated");
     });
-  }*/
+  }
 
   @override
   void dispose() {
@@ -154,6 +154,7 @@ class _MessagesListState extends State<MessagesList> {
                             friend: widget.friend,
                             message: message.message,
                             senderId: message.senderId,
+                            imagePic: url,
                             //yahn time or date show krwana hai database ki mada se
                           );
                         }),
@@ -172,6 +173,7 @@ class _MessagesListState extends State<MessagesList> {
                 ],
               ),
             ),
+            //messageImage(),
             Padding(
               padding: EdgeInsets.only(
                 top: deviceData.screenHeight * 0.02,
@@ -188,7 +190,7 @@ class _MessagesListState extends State<MessagesList> {
                   GestureDetector(
                     onTap: () {
                       getUserId();
-                      //getImage();
+                      getImage();
                     },
                     child: Container(
                       padding: EdgeInsets.only(
@@ -259,3 +261,66 @@ class _MessagesListState extends State<MessagesList> {
     }
   }
 }
+
+class messageImage extends StatefulWidget {
+
+  String imgUrl;
+  String receivedBy;
+  messageImage({this.imgUrl,this.receivedBy});
+
+  @override
+  _messageImageState createState() => _messageImageState();
+}
+
+class _messageImageState extends State<messageImage> {
+  @override
+  Widget build(BuildContext context) {
+    DeviceData deviceData = DeviceData.init(context);
+    return Container(
+      height: deviceData.screenHeight * 0.28,
+      width: MediaQuery.of(context).size.width - 80,
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: deviceData.screenHeight * 0.25,
+                width: MediaQuery.of(context).size.width - 80,
+                decoration: BoxDecoration(
+                    borderRadius: new BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                      bottomRight: Radius.circular(20.0),
+                      bottomLeft: Radius.circular(20.0),
+                    )
+                ),
+                child: Center(child: CircularProgressIndicator(color: Colors.indigo[900],)),
+              ),
+              Container(
+                height: deviceData.screenHeight * 0.25,
+                width: MediaQuery.of(context).size.width - 80,
+                decoration: BoxDecoration(
+                    borderRadius: new BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                      bottomRight: Radius.circular(20.0),
+                      bottomLeft: Radius.circular(20.0),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/chat-app-c302a.appspot.com/o/zhg7DYL1NLiw2CHCQ2EmTBZ8h6HM?alt=media&token=4f9558ea-95ab-41a8-b043-0cf2d893778e"),
+                      fit: BoxFit.cover,
+                    )
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: deviceData.screenHeight * 0.01,),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Text("Received by : Hunain Ali",style: TextStyle(color: Colors.indigo[900]),)),
+        ],
+      ),
+    );
+  }
+}
+

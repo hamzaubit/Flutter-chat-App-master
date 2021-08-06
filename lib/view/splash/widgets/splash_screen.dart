@@ -94,7 +94,7 @@ class Logo extends StatelessWidget {
       duration: Duration(milliseconds: 300),
       child: Container(
         child: Image.asset(
-          'assets/images/chatlogo.png',
+          'assets/images/logo.png',
           fit: BoxFit.contain,
           width: deviceData.screenWidth * 0.45,
         ),
