@@ -20,7 +20,6 @@ import "dart:io";
 
 class MessagesList extends StatefulWidget {
   final User friend;
-
   MessagesList({
     @required this.friend,
   });
@@ -30,6 +29,7 @@ class MessagesList extends StatefulWidget {
 }
 
 class _MessagesListState extends State<MessagesList> {
+  User user;
   TextEditingController _textController;
   List<Message> messages;
   ScrollController _scrollController = ScrollController();
@@ -48,6 +48,7 @@ class _MessagesListState extends State<MessagesList> {
 
   @override
   void initState() {
+    getUserId();
     _textController = TextEditingController();
     _scrollController = ScrollController();
     _scrollController.addListener(() => _scrollListener());
@@ -173,7 +174,50 @@ class _MessagesListState extends State<MessagesList> {
                 ],
               ),
             ),
-            //messageImage(),
+            StreamBuilder(
+                stream: Firestore.instance
+                    .collection('users')
+                    .document(uid.toString())
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                   return CircularProgressIndicator(color: Colors.deepPurple);
+                  }
+                  var userDocument = snapshot.data;
+                  String lstMsg = "_lastMessageSeen";
+                  if(userDocument[widget.friend.userId+lstMsg] == true){
+                    return Padding(
+                      padding: EdgeInsets.only(right: 25),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          height: deviceData.screenHeight * 0.04,
+                          width: deviceData.screenWidth * 0.15,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage('https://cliply.co/wp-content/uploads/2019/03/371903161_BLINKING_EYE_400px.gif'),fit: BoxFit.cover,
+                            )
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return Padding(
+                    padding: EdgeInsets.only(right: 25),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        height: deviceData.screenHeight * 0.04,
+                        width: deviceData.screenWidth * 0.15,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage('https://media.istockphoto.com/vectors/closed-eyes-with-long-eyelashes-vector-id1251321950?k=6&m=1251321950&s=612x612&w=0&h=UG-dvrb4J3if8sPIXK-7LZlNUuWZgjytvfsrRh3B-1g='),fit: BoxFit.cover,
+                            )
+                        ),
+                      ),
+                    ),
+                  );
+                }),
             Padding(
               padding: EdgeInsets.only(
                 top: deviceData.screenHeight * 0.02,

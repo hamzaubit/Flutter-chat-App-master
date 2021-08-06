@@ -34,10 +34,17 @@ class _MessageScreenState extends State<MessagesScreen> with WidgetsBindingObser
   bool showMessages = false;
   MessagesBloc messagesBloc;
   bool changeStatus = true;
-
+  String uid;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  void getUserId() async {
+    final FirebaseUser user = await auth.currentUser();
+    uid = user.uid;
+    print("User Id : " + uid.toString());
+  }
 
   @override
   void initState() {
+    getUserId();
     messagesBloc = serviceLocator<MessagesBloc>();
     controller = TextEditingController();
     super.initState();

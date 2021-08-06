@@ -87,7 +87,7 @@ class _FriendsScreenViewState extends State<FriendsScreenView> {
                 context,
                 PageTransition(
                     type: PageTransitionType.fade,
-                    child: MessagesScreen(friend: state.user)));
+                    child: MessagesScreen(friend: state.user,)));
           }
         },
         child: BlocProvider<FriendsBloc>(

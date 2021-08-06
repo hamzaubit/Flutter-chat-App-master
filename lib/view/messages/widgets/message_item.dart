@@ -25,7 +25,6 @@ class MessageItem extends StatefulWidget {
 }
 
 class _MessageItemState extends State<MessageItem> {
-
   @override
   Widget build(BuildContext context) {
     DeviceData deviceData = DeviceData.init(context);
@@ -59,17 +58,20 @@ class _MessageItemState extends State<MessageItem> {
               Flexible(
                 child: Container(
                   decoration: BoxDecoration(
-                      color: kBackgroundColor
-                          .withOpacity(widget.senderId == widget.friend.userId ? 0.3 : 1.0),
+                      color: kBackgroundColor.withOpacity(
+                          widget.senderId == widget.friend.userId ? 0.3 : 1.0),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(deviceData.screenWidth * 0.05),
-                        topRight: Radius.circular(deviceData.screenWidth * 0.05),
-                        bottomRight: Radius.circular(widget.senderId == widget.friend.userId
-                            ? deviceData.screenWidth * 0.05
-                            : 0),
-                        bottomLeft: Radius.circular(widget.senderId != widget.friend.userId
-                            ? deviceData.screenWidth * 0.05
-                            : 0),
+                        topRight:
+                            Radius.circular(deviceData.screenWidth * 0.05),
+                        bottomRight: Radius.circular(
+                            widget.senderId == widget.friend.userId
+                                ? deviceData.screenWidth * 0.05
+                                : 0),
+                        bottomLeft: Radius.circular(
+                            widget.senderId != widget.friend.userId
+                                ? deviceData.screenWidth * 0.05
+                                : 0),
                       )),
                   padding: EdgeInsets.symmetric(
                       vertical: deviceData.screenHeight * 0.015,
@@ -94,10 +96,10 @@ class _MessageItemState extends State<MessageItem> {
 }
 
 class messageImage extends StatefulWidget {
-
   String imgUrl;
   String receivedBy;
-  messageImage({this.imgUrl,this.receivedBy});
+
+  messageImage({this.imgUrl, this.receivedBy});
 
   @override
   _messageImageState createState() => _messageImageState();
@@ -119,13 +121,15 @@ class _messageImageState extends State<messageImage> {
                 width: MediaQuery.of(context).size.width - 80,
                 decoration: BoxDecoration(
                     borderRadius: new BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                      bottomRight: Radius.circular(20.0),
-                      bottomLeft: Radius.circular(20.0),
-                    )
-                ),
-                child: Center(child: CircularProgressIndicator(color: Colors.indigo[900],)),
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                  bottomRight: Radius.circular(20.0),
+                  bottomLeft: Radius.circular(20.0),
+                )),
+                child: Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.indigo[900],
+                )),
               ),
               Container(
                 height: deviceData.screenHeight * 0.25,
@@ -140,15 +144,19 @@ class _messageImageState extends State<messageImage> {
                     image: DecorationImage(
                       image: NetworkImage(widget.imgUrl),
                       fit: BoxFit.cover,
-                    )
-                ),
+                    )),
               ),
             ],
           ),
-          SizedBox(height: deviceData.screenHeight * 0.01,),
+          SizedBox(
+            height: deviceData.screenHeight * 0.01,
+          ),
           Align(
               alignment: Alignment.centerLeft,
-              child: Text(widget.receivedBy,style: TextStyle(color: Colors.indigo[900]),)),
+              child: Text(
+                widget.receivedBy,
+                style: TextStyle(color: Colors.indigo[900]),
+              )),
         ],
       ),
     );
@@ -157,18 +165,11 @@ class _messageImageState extends State<messageImage> {
 
 /*
 StreamBuilder(
-stream: Firestore.instance.collection('mediaData').document(senderId).collection('media').document(friend.userId).snapshots(),
-builder: (context, snapshot){
-return snapshot.hasData ?
-ListView.builder(
-itemCount: snapshot.data.documents.length,
-itemBuilder: (context, index) {
-return messageImage(
-imgUrl: snapshot.data.documents[index].data['imageUrl'],
-receivedBy: snapshot.data.documents[index].data['receivedBy'],
-);
-}) : Container(
-child: Center(child: Text("Loading...")),
-);
+stream: Firestore.instance.collection('users').document(widget.senderId).snapshots(),
+builder:(context , snapshot){
+if(!snapshot.hasData){
+return Text("Not Seen");
 }
-),*/
+var userDocument = snapshot.data;
+return Text(userDocument[widget.friend.userId + "_" + 'lastMessageSeen']);
+}),*/

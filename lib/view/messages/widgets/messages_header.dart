@@ -41,7 +41,7 @@ class _MessagesHeaderState extends State<MessagesHeader> {
                 user: widget.friend,
                 radius: 0.05,
               ),
-              SizedBox(width: deviceData.screenWidth * 0.025),
+              SizedBox(width: deviceData.screenWidth * 0.015),
               Column(
                 children: [
                   Text(
