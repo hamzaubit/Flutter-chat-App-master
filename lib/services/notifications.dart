@@ -69,7 +69,7 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Text("Shaway! \nWelcome to the Medical Services Provider App"),
+      content: Text("SmartChat"),
       actions: <Widget>[
         FlatButton(
           child: const Text('Continue...'),
@@ -104,7 +104,7 @@ class _PushMessagingExampleState extends State<PushMessagingExample> {
 
   Widget _buildDialog(BuildContext context, Item item) {
     return AlertDialog(
-      content: Text("Shaway! \nWelcome to the Medical Services Provider App"),
+      content: Text("SmartChat"),
       actions: <Widget>[
         FlatButton(
           child: const Text('Continue...'),

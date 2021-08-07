@@ -186,34 +186,28 @@ class _MessagesListState extends State<MessagesList> {
                   var userDocument = snapshot.data;
                   String lstMsg = "_lastMessageSeen";
                   if(userDocument[widget.friend.userId+lstMsg] == true){
-                    return Padding(
-                      padding: EdgeInsets.only(right: 25),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          height: deviceData.screenHeight * 0.04,
-                          width: deviceData.screenWidth * 0.15,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage('https://cliply.co/wp-content/uploads/2019/03/371903161_BLINKING_EYE_400px.gif'),fit: BoxFit.cover,
-                            )
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  return Padding(
-                    padding: EdgeInsets.only(right: 25),
-                    child: Align(
-                      alignment: Alignment.centerRight,
+                    return Align(
+                      alignment: Alignment.center,
                       child: Container(
                         height: deviceData.screenHeight * 0.04,
                         width: deviceData.screenWidth * 0.15,
                         decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage('https://media.istockphoto.com/vectors/closed-eyes-with-long-eyelashes-vector-id1251321950?k=6&m=1251321950&s=612x612&w=0&h=UG-dvrb4J3if8sPIXK-7LZlNUuWZgjytvfsrRh3B-1g='),fit: BoxFit.cover,
-                            )
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/seenPic.gif'),fit: BoxFit.cover,
+                          )
                         ),
+                      ),
+                    );
+                  }
+                  return Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      height: deviceData.screenHeight * 0.04,
+                      width: deviceData.screenWidth * 0.15,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/unseenPic.jpg'),fit: BoxFit.cover,
+                          )
                       ),
                     ),
                   );

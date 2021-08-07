@@ -117,7 +117,7 @@ class Description extends StatelessWidget {
         "Start chatting with people from \n all over the world.",
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: Colors.black54,
+          color: Colors.deepPurple,
           fontSize: deviceData.screenHeight * 0.018,
         ),
       ),
