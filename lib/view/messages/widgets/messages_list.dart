@@ -174,44 +174,70 @@ class _MessagesListState extends State<MessagesList> {
                 ],
               ),
             ),
-            StreamBuilder(
-                stream: Firestore.instance
-                    .collection('users')
-                    .document(uid.toString())
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                   return CircularProgressIndicator(color: Colors.deepPurple);
-                  }
-                  var userDocument = snapshot.data;
-                  String lstMsg = "_lastMessageSeen";
-                  if(userDocument[widget.friend.userId+lstMsg] == true){
-                    return Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: deviceData.screenHeight * 0.04,
-                        width: deviceData.screenWidth * 0.15,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/seenPic.gif'),fit: BoxFit.cover,
-                          )
+            Row(
+              children: [
+                SizedBox(width: deviceData.screenWidth * 0.06,),
+                StreamBuilder(
+                    stream: Firestore.instance.collection('userStatus').document(widget.friend.userId).snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return CircularProgressIndicator(color: Colors.deepPurple);
+                      }
+                      var userDocument = snapshot.data;
+                      if(userDocument['status'] == "Typing..."){
+                        return Container(
+                          height: deviceData.screenHeight * 0.04,
+                          width: deviceData.screenWidth * 0.15,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/typing.gif'),fit: BoxFit.cover,
+                              )
+                          ),
+                        );
+                      }
+                      return Container(width: deviceData.screenWidth * 0.15,);
+                    }),
+                SizedBox(width: deviceData.screenWidth * 0.20,),
+                StreamBuilder(
+                    stream: Firestore.instance
+                        .collection('users')
+                        .document(uid.toString())
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return CircularProgressIndicator(color: Colors.deepPurple);
+                      }
+                      var userDocument = snapshot.data;
+                      String lstMsg = "_lastMessageSeen";
+                      if(userDocument[widget.friend.userId+lstMsg] == true){
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: Container(
+                            height: deviceData.screenHeight * 0.04,
+                            width: deviceData.screenWidth * 0.15,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/seenPic.gif'),fit: BoxFit.cover,
+                                )
+                            ),
+                          ),
+                        );
+                      }
+                      return Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          height: deviceData.screenHeight * 0.04,
+                          width: deviceData.screenWidth * 0.15,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/unseenPic.jpg'),fit: BoxFit.cover,
+                              )
+                          ),
                         ),
-                      ),
-                    );
-                  }
-                  return Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: deviceData.screenHeight * 0.04,
-                      width: deviceData.screenWidth * 0.15,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/unseenPic.jpg'),fit: BoxFit.cover,
-                          )
-                      ),
-                    ),
-                  );
-                }),
+                      );
+                    }),
+              ],
+            ),
             Padding(
               padding: EdgeInsets.only(
                 top: deviceData.screenHeight * 0.02,
