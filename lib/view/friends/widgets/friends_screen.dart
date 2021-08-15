@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/service_locator.dart';
 import 'package:chat/services/cloud_messaging_service/cloud_message_repository.dart';
 import 'package:chat/services/cloud_messaging_service/cloud_messaging_impl.dart';
@@ -69,6 +70,17 @@ class _FriendsScreenViewState extends State<FriendsScreenView> {
       //offlie
     }
   }*/
+
+ void notify() async {
+   await AwesomeNotifications().createNotification(
+       content: NotificationContent(
+         id: 1,
+         channelKey: "key1",
+         title: "Smart Chat",
+         body: "You Have One New Message",
+       ),
+   );
+ }
 
   @override
   void dispose() {

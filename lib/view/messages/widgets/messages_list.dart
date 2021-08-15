@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/models/message.dart';
 import 'package:chat/models/user.dart';
 import 'package:chat/utils/functions.dart';
@@ -37,6 +39,10 @@ class _MessagesListState extends State<MessagesList> {
   File smapleImage;
   var url;
   String uid;
+  int _counter = 1;
+  Timer _timer;
+  String _timeString;
+  String fcmToken;
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -52,6 +58,7 @@ class _MessagesListState extends State<MessagesList> {
     _textController = TextEditingController();
     _scrollController = ScrollController();
     _scrollController.addListener(() => _scrollListener());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startTimer());
     super.initState();
   }
 
@@ -63,6 +70,25 @@ class _MessagesListState extends State<MessagesList> {
       context.bloc<MessagesBloc>().add(MoreMessagesFetched(
           _scrollController.position.pixels, messages.length));
     }
+  }
+
+  void _startTimer() {
+    _counter = 1;
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_counter > 0) {
+          _counter--;
+        } else {
+          _timer.cancel();
+          print("Created");
+          //fcmTokenForNotification(fcmToken);
+          createDataForChatStatus();
+        }
+      });
+    });
   }
 
   String _chars =
@@ -93,6 +119,26 @@ class _MessagesListState extends State<MessagesList> {
       mediaMessage();
     });
   }
+  void notify() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1,
+        channelKey: "key1",
+        title: "Smart Chat",
+        body: "${widget.friend.name} \n is typing...",
+      ),
+    );
+  }
+  void notify1() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1,
+        channelKey: "key1",
+        title: "Smart Chat",
+        body: "${widget.friend.name} \n is open your chat",
+      ),
+    );
+  }
 
   mediaMessage() {
     DocumentReference documentReference = Firestore.instance
@@ -109,6 +155,16 @@ class _MessagesListState extends State<MessagesList> {
     };
     documentReference.setData(students).whenComplete(() {
       print("Media MessageCreated");
+    });
+  }
+  createDataForChatStatus(){
+    DocumentReference documentReference = Firestore.instance.collection("userChatStatus").document(uid);
+    Map<String , dynamic> userStatus = {
+      "chatOpen": true,
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Status Created for chat");
     });
   }
 
@@ -178,15 +234,41 @@ class _MessagesListState extends State<MessagesList> {
               children: [
                 SizedBox(width: deviceData.screenWidth * 0.06,),
                 StreamBuilder(
+                    stream: Firestore.instance.collection('userChatStatus').document(widget.friend.userId).snapshots(),
+                    builder: (context, snapshot){
+                      if (!snapshot.hasData) {
+                        return Container();
+                      }
+                      var userDocument = snapshot.data;
+                      if(userDocument['chatOpen'] == true){
+                        notify1();
+                            DocumentReference documentReference = Firestore.instance.collection("userChatStatus").document(uid);
+                            Map<String , dynamic> userStatus = {
+                              "chatOpen": false,
+                            };
+                            documentReference.setData(userStatus).whenComplete(()
+                            {
+                              print("Status Created for chat");
+                            });
+                        return Container();
+                      }
+                      else
+                        {
+                          return Container();
+                        }
+                    }
+                ),
+                StreamBuilder(
                     stream: Firestore.instance.collection('userStatus').document(widget.friend.userId).snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return CircularProgressIndicator(color: Colors.deepPurple);
+                        return Container();
                       }
                       var userDocument = snapshot.data;
                       if(userDocument['status'] == "Typing..."){
+                        notify();
                         return Container(
-                          height: deviceData.screenHeight * 0.04,
+                          height: deviceData.screenHeight * 0.06,
                           width: deviceData.screenWidth * 0.15,
                           decoration: BoxDecoration(
                               image: DecorationImage(
@@ -197,7 +279,7 @@ class _MessagesListState extends State<MessagesList> {
                       }
                       return Container(width: deviceData.screenWidth * 0.15,);
                     }),
-                SizedBox(width: deviceData.screenWidth * 0.20,),
+                SizedBox(width: deviceData.screenWidth * 0.23,),
                 StreamBuilder(
                     stream: Firestore.instance
                         .collection('users')
@@ -205,7 +287,7 @@ class _MessagesListState extends State<MessagesList> {
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return CircularProgressIndicator(color: Colors.deepPurple);
+                        return Container();
                       }
                       var userDocument = snapshot.data;
                       String lstMsg = "_lastMessageSeen";
@@ -213,8 +295,8 @@ class _MessagesListState extends State<MessagesList> {
                         return Padding(
                           padding: const EdgeInsets.only(right: 20),
                           child: Container(
-                            height: deviceData.screenHeight * 0.04,
-                            width: deviceData.screenWidth * 0.15,
+                            height: deviceData.screenHeight * 0.05,
+                            width: deviceData.screenWidth * 0.1,
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: AssetImage('assets/images/seenPic.gif'),fit: BoxFit.cover,
@@ -226,11 +308,11 @@ class _MessagesListState extends State<MessagesList> {
                       return Align(
                         alignment: Alignment.center,
                         child: Container(
-                          height: deviceData.screenHeight * 0.04,
-                          width: deviceData.screenWidth * 0.15,
+                          height: deviceData.screenHeight * 0.045,
+                          width: deviceData.screenWidth * 0.095,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/images/unseenPic.jpg'),fit: BoxFit.cover,
+                                image: AssetImage('assets/images/unseen.png'),fit: BoxFit.cover,
                               )
                           ),
                         ),

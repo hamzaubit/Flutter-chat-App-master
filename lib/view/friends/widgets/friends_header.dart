@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/view/friends/widgets/avatar_button.dart';
 import 'package:chat/view/friends/widgets/back_icon.dart';
 import 'package:chat/view/messages/widgets/message_input.dart';
@@ -64,6 +65,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
         } else {
           _timer.cancel();
           print("Created");
+          createDataForChatStatus();
           //fcmTokenForNotification(fcmToken);
           DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
           Map<String , dynamic> userStatus = {
@@ -111,6 +113,26 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     OneSignal.shared
         .setAppId(oneSignalAppId);
   }*/
+  void notify() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1,
+        channelKey: "key1",
+        title: "Smart Chat",
+        body: "You Have One New Message",
+      ),
+    );
+  }
+  createDataForChatStatus(){
+    DocumentReference documentReference = Firestore.instance.collection("userChatStatus").document(uid);
+    Map<String , dynamic> userStatus = {
+      "chatOpen": false,
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Status Created for chat");
+    });
+  }
 
   void initState(){
     //configOneSignel();
@@ -158,6 +180,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
             children: <Widget>[
               GestureDetector(
                 onTap: (){
+                  //notify();
                 },
                 child: Text(
                   "Let's Chat \nwith SmartChat",

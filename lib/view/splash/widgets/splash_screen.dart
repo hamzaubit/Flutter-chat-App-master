@@ -94,9 +94,9 @@ class Logo extends StatelessWidget {
       duration: Duration(milliseconds: 300),
       child: Container(
         child: Image.asset(
-          'assets/images/logo.png',
+          'assets/images/appLogo.png',
           fit: BoxFit.contain,
-          width: deviceData.screenWidth * 0.45,
+          width: deviceData.screenWidth * 0.70,
         ),
       ),
     );
