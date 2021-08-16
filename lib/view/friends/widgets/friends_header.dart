@@ -199,7 +199,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                   return Container();
                 }
                 var userDocument = snapshot.data;
-                if(userDocument['message'] == true && userDocument['message'] != null){
+                if(userDocument['message'] == true){
                   notifyMessage(userDocument['messageSender']);
                   DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(uid);
                   Map<String , dynamic> userStatus = {

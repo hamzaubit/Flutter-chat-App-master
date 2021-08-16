@@ -67,7 +67,7 @@ class _MessagesHeaderState extends State<MessagesHeader> {
               ),
             ],
           ),
-          SizedBox(width: deviceData.screenWidth * 0.15),
+          SizedBox(width: deviceData.screenWidth * 0.12),
           GestureDetector(
             onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));
