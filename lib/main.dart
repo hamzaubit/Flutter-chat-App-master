@@ -14,7 +14,7 @@ void main() {
         NotificationChannel(
           channelKey: "key1",
           channelName: "SmartChat Notification",
-          channelDescription: "Notification Description"
+          channelDescription: "Notification Description",
         )
       ]
   );

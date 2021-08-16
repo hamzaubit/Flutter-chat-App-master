@@ -10,14 +10,17 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 
 class SendIcon extends StatefulWidget {
+
   const SendIcon({
     Key key,
     @required this.controller,
     @required this.friendId,
+    @required this.myName,
   }) : super(key: key);
 
   final TextEditingController controller;
   final String friendId;
+  final String myName;
 
   @override
   _SendIconState createState() => _SendIconState();
@@ -32,6 +35,18 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
   String _timeString;
   String fcmToken;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  void messageNotifData(bool message , String senderName){
+    DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(widget.friendId);
+    Map<String , dynamic> userStatus = {
+      "message": message,
+      "messageSender": senderName,
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Message Notif Created");
+    });
+  }
 
   void _getTime() {
     final DateTime now = DateTime.now();
@@ -65,6 +80,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
           };
           documentReference.setData(userStatus).whenComplete(() {
             print("Status Created");
+            messageNotifData(false,"");
           });
         }
       });
@@ -121,6 +137,16 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
           onTap: () async {
             if (widget.controller.text.trim().isNotEmpty) {
               createData("Online");
+              messageNotifData(true,widget.myName);
+              DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(widget.friendId);
+              Map<String , dynamic> userStatus = {
+                "message": false,
+                "messageSender": widget.myName,
+              };
+              documentReference.setData(userStatus).whenComplete(()
+              {
+                print("Message Notif Created");
+              });
                   BlocProvider.of<MessagesBloc>(context).add(
                   MessageSent(message: widget.controller.text, friendId: widget.friendId));
             }

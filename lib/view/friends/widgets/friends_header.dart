@@ -14,6 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+
+
 class FriendsHeader extends StatefulWidget {
   const FriendsHeader({
     Key key,
@@ -88,6 +90,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
           {
             print("Status Created");
           });
+          messageStatusCollection();
         }
       });
     });
@@ -125,15 +128,26 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     OneSignal.shared
         .setAppId(oneSignalAppId);
   }*/
-  void notify() async {
+  void notifyMessage(String senderName) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1,
         channelKey: "key1",
         title: "Smart Chat",
-        body: "You Have One New Message",
+        body: "Message From $senderName",
       ),
     );
+  }
+  void messageStatusCollection() async {
+    DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(uid);
+    Map<String , dynamic> userStatus = {
+      "message": false,
+      "messageSender": "",
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Status Created");
+    });
   }
 
   void initState(){
@@ -177,18 +191,36 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          uid == null ? Container() :
+          StreamBuilder(
+              stream: Firestore.instance.collection('messageStatus').document(uid).snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                }
+                var userDocument = snapshot.data;
+                if(userDocument['message'] == true && userDocument['message'] != null){
+                  notifyMessage(userDocument['messageSender']);
+                  DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(uid);
+                  Map<String , dynamic> userStatus = {
+                    "message": false,
+                    "messageSender": userDocument['messageSender'],
+                  };
+                  documentReference.setData(userStatus).whenComplete(()
+                  {
+                    print("Status Created");
+                  });
+                  return Container();
+                }
+                return Container();
+              }),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              GestureDetector(
-                onTap: (){
-                  //notify();
-                },
-                child: Text(
-                  "Let's Chat \nwith SmartChat",
-                  style: kTitleTextStyle.copyWith(
-                    fontSize: deviceData.screenHeight * 0.028,
-                  ),
+              Text(
+                "Let's Chat \nwith SmartChat",
+                style: kTitleTextStyle.copyWith(
+                  fontSize: deviceData.screenHeight * 0.028,
                 ),
               ),
               PopUpMenu(),

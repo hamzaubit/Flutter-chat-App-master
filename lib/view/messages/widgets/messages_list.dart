@@ -44,6 +44,7 @@ class _MessagesListState extends State<MessagesList> {
   String _timeString;
   String fcmToken;
   bool heartRain = false;
+  String MyName;
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -51,6 +52,7 @@ class _MessagesListState extends State<MessagesList> {
     final FirebaseUser user = await auth.currentUser();
     uid = user.uid;
     print("User Id : " + uid.toString());
+    print("Friend Id : " +widget.friend.userId);
   }
 
   void hearRain(bool heartRain) async {
@@ -95,6 +97,7 @@ class _MessagesListState extends State<MessagesList> {
         } else {
           _timer.cancel();
           print("Created");
+          messageNotifData(false,"");
           //fcmTokenForNotification(fcmToken);
         }
       });
@@ -114,6 +117,17 @@ class _MessagesListState extends State<MessagesList> {
       smapleImage = imagePicker;
       uploadImage();
       //forDisableButton = true;
+    });
+  }
+  void messageNotifData(bool message , String senderName){
+    DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(widget.friend.userId);
+    Map<String , dynamic> userStatus = {
+      "message": message,
+      "messageSender": senderName,
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Message Notif Created");
     });
   }
 
@@ -136,16 +150,6 @@ class _MessagesListState extends State<MessagesList> {
         channelKey: "key1",
         title: "Smart Chat",
         body: "${widget.friend.name} \n is typing...",
-      ),
-    );
-  }
-  void notify1() async {
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 1,
-        channelKey: "key1",
-        title: "Smart Chat",
-        body: "${widget.friend.name} \n is open your chat",
       ),
     );
   }
@@ -185,6 +189,18 @@ class _MessagesListState extends State<MessagesList> {
       if (messages != null) {
         return Column(
           children: [
+            uid == null ? Container() : StreamBuilder(
+                stream: Firestore.instance.collection('users').document(uid).snapshots(),
+                builder: (context, snapshot){
+                  if (!snapshot.hasData) {
+                    return Container();
+                  }
+                  var userDocument = snapshot.data;
+                  MyName = userDocument['name'];
+                  print(MyName);
+                  return Container();
+                }
+            ),
             Expanded(
               child: Stack(
                 children: [
@@ -235,7 +251,6 @@ class _MessagesListState extends State<MessagesList> {
                               }
                               var userDocument = snapshot.data;
                               if(userDocument['heartValue'] == true){
-                                print("Chalega Yeh...");
                                 return Container(
                                   height: deviceData.screenHeight * 0.8,
                                   width: MediaQuery.of(context).size.width,
@@ -346,7 +361,6 @@ class _MessagesListState extends State<MessagesList> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        print("Pressed");
                         heartRain =! heartRain;
                         hearRain(heartRain);
                       });
@@ -364,7 +378,6 @@ class _MessagesListState extends State<MessagesList> {
                         ) : GestureDetector(
                           onTap: () {
                             setState(() {
-                              print("Pressed");
                               heartRain =! heartRain;
                               hearRain(heartRain);
                             });
@@ -404,6 +417,7 @@ class _MessagesListState extends State<MessagesList> {
                   SendIcon(
                     controller: _textController,
                     friendId: widget.friend.userId,
+                    myName: MyName,
                   ),
                 ],
               ),
