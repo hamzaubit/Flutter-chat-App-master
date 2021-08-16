@@ -49,6 +49,18 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       _timeString = formattedDateTime;
     });
   }
+
+  void hearRain() async {
+    DocumentReference documentReference = Firestore.instance.collection("heartStatus").document(uid);
+    Map<String , dynamic> userStatus = {
+      "heartValue": "",
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Heart Created");
+    });
+  }
+
   String _formatDateTime(DateTime dateTime) {
     return DateFormat('h:mm a | d MMM').format(dateTime);
   }
@@ -65,8 +77,8 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
         } else {
           _timer.cancel();
           print("Created");
-          createDataForChatStatus();
           //fcmTokenForNotification(fcmToken);
+          hearRain();
           DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
           Map<String , dynamic> userStatus = {
             "status": status,
@@ -122,16 +134,6 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
         body: "You Have One New Message",
       ),
     );
-  }
-  createDataForChatStatus(){
-    DocumentReference documentReference = Firestore.instance.collection("userChatStatus").document(uid);
-    Map<String , dynamic> userStatus = {
-      "chatOpen": false,
-    };
-    documentReference.setData(userStatus).whenComplete(()
-    {
-      print("Status Created for chat");
-    });
   }
 
   void initState(){

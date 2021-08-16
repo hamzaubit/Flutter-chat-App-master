@@ -43,6 +43,7 @@ class _MessagesListState extends State<MessagesList> {
   Timer _timer;
   String _timeString;
   String fcmToken;
+  bool heartRain = false;
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -52,6 +53,16 @@ class _MessagesListState extends State<MessagesList> {
     print("User Id : " + uid.toString());
   }
 
+  void hearRain(bool heartRain) async {
+    DocumentReference documentReference = Firestore.instance.collection("heartStatus").document(uid);
+    Map<String , dynamic> userStatus = {
+      "heartValue": heartRain,
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Heart Created");
+    });
+  }
   @override
   void initState() {
     getUserId();
@@ -85,7 +96,6 @@ class _MessagesListState extends State<MessagesList> {
           _timer.cancel();
           print("Created");
           //fcmTokenForNotification(fcmToken);
-          createDataForChatStatus();
         }
       });
     });
@@ -157,16 +167,6 @@ class _MessagesListState extends State<MessagesList> {
       print("Media MessageCreated");
     });
   }
-  createDataForChatStatus(){
-    DocumentReference documentReference = Firestore.instance.collection("userChatStatus").document(uid);
-    Map<String , dynamic> userStatus = {
-      "chatOpen": true,
-    };
-    documentReference.setData(userStatus).whenComplete(()
-    {
-      print("Status Created for chat");
-    });
-  }
 
   @override
   void dispose() {
@@ -199,22 +199,61 @@ class _MessagesListState extends State<MessagesList> {
                               fontSize: deviceData.screenHeight * 0.019,
                               color: kBackgroundButtonColor,
                             )))
-                        : ListView.builder(
-                        controller: _scrollController,
-                        reverse: true,
-                        itemCount: messages.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final message = messages[index];
-                          return MessageItem(
-                            showFriendImage:
-                            _showFriendImage(message, index),
-                            friend: widget.friend,
-                            message: message.message,
-                            senderId: message.senderId,
-                            imagePic: url,
-                            //yahn time or date show krwana hai database ki mada se
-                          );
-                        }),
+                        : Stack(
+                      children: [
+                        ListView.builder(
+                            controller: _scrollController,
+                            reverse: true,
+                            itemCount: messages.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final message = messages[index];
+                              return MessageItem(
+                                showFriendImage:
+                                _showFriendImage(message, index),
+                                friend: widget.friend,
+                                message: message.message,
+                                senderId: message.senderId,
+                                imagePic: url,
+                                //yahn time or date show krwana hai database ki mada se
+                              );
+                            }),
+                        heartRain ? Container(
+                          height: deviceData.screenHeight * 0.8,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/heart.gif'),
+                            )
+                          ),
+                        ) : Container(),
+                        StreamBuilder(
+                            stream: Firestore.instance.collection('heartStatus').document(widget.friend.userId).snapshots(),
+                            builder: (context, snapshot){
+                              if(!snapshot.hasData){
+                                return Container();
+                              }
+                              var userDocument = snapshot.data;
+                              if(userDocument['heartValue'] == true){
+                                print("Chalega Yeh...");
+                                return Container(
+                                  height: deviceData.screenHeight * 0.8,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      image: DecorationImage(
+                                        image: AssetImage('assets/images/heart.gif'),
+                                      )
+                                  ),
+                                );
+                              }
+                              else{
+                                return Container();
+                              }
+                            }
+                        ),
+                      ],
+                    ),
                   ),
                   state is MoreMessagesLoading
                       ? Padding(
@@ -233,31 +272,6 @@ class _MessagesListState extends State<MessagesList> {
             Row(
               children: [
                 SizedBox(width: deviceData.screenWidth * 0.06,),
-                StreamBuilder(
-                    stream: Firestore.instance.collection('userChatStatus').document(widget.friend.userId).snapshots(),
-                    builder: (context, snapshot){
-                      if (!snapshot.hasData) {
-                        return Container();
-                      }
-                      var userDocument = snapshot.data;
-                      if(userDocument['chatOpen'] == true){
-                        notify1();
-                            DocumentReference documentReference = Firestore.instance.collection("userChatStatus").document(uid);
-                            Map<String , dynamic> userStatus = {
-                              "chatOpen": false,
-                            };
-                            documentReference.setData(userStatus).whenComplete(()
-                            {
-                              print("Status Created for chat");
-                            });
-                        return Container();
-                      }
-                      else
-                        {
-                          return Container();
-                        }
-                    }
-                ),
                 StreamBuilder(
                     stream: Firestore.instance.collection('userStatus').document(widget.friend.userId).snapshots(),
                     builder: (context, snapshot) {
@@ -324,11 +338,46 @@ class _MessagesListState extends State<MessagesList> {
               padding: EdgeInsets.only(
                 top: deviceData.screenHeight * 0.02,
                 bottom: deviceData.screenHeight * 0.02,
-                left: deviceData.screenWidth * 0.07,
+                left: deviceData.screenWidth * 0.04,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        print("Pressed");
+                        heartRain =! heartRain;
+                        hearRain(heartRain);
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          top: deviceData.screenHeight * 0.01,
+                          bottom: deviceData.screenHeight * 0.01,
+                          right: deviceData.screenWidth * 0.02),
+                      child: InkResponse(
+                        child: heartRain ? Icon(
+                          Icons.favorite_outlined,
+                          color: kBackgroundButtonColor,
+                          size: deviceData.screenWidth * 0.065,
+                        ) : GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              print("Pressed");
+                              heartRain =! heartRain;
+                              hearRain(heartRain);
+                            });
+                          },
+                          child: Icon(
+                            Icons.favorite_outline,
+                            color: kBackgroundButtonColor,
+                            size: deviceData.screenWidth * 0.065,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   MessageInput(controller: _textController),
                   SizedBox(
                     width: deviceData.screenHeight * 0.020,

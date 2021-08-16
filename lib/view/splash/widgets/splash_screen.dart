@@ -118,7 +118,7 @@ class Description extends StatelessWidget {
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Colors.deepPurple,
-          fontSize: deviceData.screenHeight * 0.018,
+          fontSize: deviceData.screenHeight * 0.02,
         ),
       ),
     );
