@@ -70,7 +70,7 @@ class _MessagesHeaderState extends State<MessagesHeader> {
           SizedBox(width: deviceData.screenWidth * 0.12),
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage(friendId: widget.friend.userId,)));
             },
             child: Container(
               width: deviceData.screenHeight * 0.05,
@@ -89,7 +89,7 @@ class _MessagesHeaderState extends State<MessagesHeader> {
           SizedBox(width: deviceData.screenWidth * 0.020),
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => IndexPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => IndexPage(friendId: widget.friend.userId,)));
             },
             child: Container(
               width: deviceData.screenHeight * 0.05,

@@ -98,6 +98,7 @@ class _MessagesListState extends State<MessagesList> {
           _timer.cancel();
           print("Created");
           messageNotifData(false,"");
+
           //fcmTokenForNotification(fcmToken);
         }
       });

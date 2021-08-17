@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:chat/models/user.dart';
+import 'package:chat/videoCall/index.dart';
 import 'package:chat/view/friends/widgets/avatar_button.dart';
 import 'package:chat/view/friends/widgets/back_icon.dart';
 import 'package:chat/view/messages/widgets/message_input.dart';
@@ -22,8 +24,9 @@ class FriendsHeader extends StatefulWidget {
     @required this.editForm,
     @required this.onBackPressed,
     @required this.onAvatarPressed,
+    @required this.friend,
   }) : super(key: key);
-
+  final User friend;
   final bool editForm;
   final Function onBackPressed;
   final Function onAvatarPressed;
@@ -43,6 +46,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   String fcmToken;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String oneSignalAppId = "36ea0ab1-4b23-4a4a-b5f0-c78ef4dc76b5";
+  String MyName;
 
   void _getTime() {
     final DateTime now = DateTime.now();
@@ -60,6 +64,19 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     documentReference.setData(userStatus).whenComplete(()
     {
       print("Heart Created");
+    });
+  }
+
+  callingNotif(String callerName) async {
+    DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
+    Map<String , dynamic> userStatus = {
+      "videoCall": false,
+      "callerName": callerName,
+      "audioCall": false,
+    };
+    documentReference.setData(userStatus).whenComplete(()
+    {
+      print("Call Status Created");
     });
   }
 
@@ -135,6 +152,16 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
         channelKey: "key1",
         title: "Smart Chat",
         body: "Message From $senderName",
+      ),
+    );
+  }
+  void notifyCalling(String senderName, String callingType) async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1,
+        channelKey: "key1",
+        title: "Smart Chat",
+        body: "$callingType $senderName",
       ),
     );
   }
@@ -214,6 +241,19 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                 }
                 return Container();
               }),
+          uid == null ? Container() : StreamBuilder(
+              stream: Firestore.instance.collection('users').document(uid).snapshots(),
+              builder: (context, snapshot){
+                if (!snapshot.hasData) {
+                  return Container();
+                }
+                var userDocument = snapshot.data;
+                MyName = userDocument['name'];
+                print(MyName);
+                callingNotif(MyName);
+                return Container();
+              }
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -236,13 +276,13 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                   duration: Duration(milliseconds: 300),
                   child: widget.editForm
                       ? BackIcon(
-                          onPressed: () =>
-                              widget.onBackPressed != null ? widget.onBackPressed() : null)
+                      onPressed: () =>
+                      widget.onBackPressed != null ? widget.onBackPressed() : null)
                       : SearchWidget(),
                 ),
                 AvatarButton(
                   onPressed: () =>
-                      widget.onAvatarPressed != null ? widget.onAvatarPressed() : null,
+                  widget.onAvatarPressed != null ? widget.onAvatarPressed() : null,
                 ),
               ],
             ),

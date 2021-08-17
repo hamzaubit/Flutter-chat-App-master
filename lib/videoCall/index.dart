@@ -1,12 +1,17 @@
 import 'dart:async';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:chat/models/user.dart';
+import 'package:chat/view/utils/device_config.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'call.dart';
 
 class IndexPage extends StatefulWidget {
+  const IndexPage({@required this.friendId});
+  final String friendId;
   @override
   State<StatefulWidget> createState() => IndexState();
 }
@@ -17,6 +22,7 @@ class IndexState extends State<IndexPage> {
 
   /// if channel textField is validated to have error
   bool _validateError = false;
+  String FriendName;
 
   ClientRole _role = ClientRole.Broadcaster;
   @override
@@ -28,10 +34,12 @@ class IndexState extends State<IndexPage> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceData = DeviceData.init(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF4B0082),
         title: Text('Video Calling'),
+        centerTitle: true,
       ),
       body: Center(
         child: Container(
@@ -84,13 +92,38 @@ class IndexState extends State<IndexPage> {
                   )*/
                 ],
               ),
+              StreamBuilder(
+                  stream: Firestore.instance.collection('callingNotif').document(widget.friendId).snapshots(),
+                  builder: (context, snapshot){
+                    if(!snapshot.hasData){
+                      var userDocument = snapshot.data;
+                      FriendName = userDocument['callerName'];
+                      return Text(userDocument['callerName'].toString(),style: TextStyle(fontSize: deviceData.screenWidth * 0.05,color: Color(0xFF4B0082)),);
+                    }
+                    var userDocument = snapshot.data;
+                    FriendName = userDocument['callerName'];
+                    return Text(userDocument['callerName'].toString(),style: TextStyle(fontSize: deviceData.screenWidth * 0.05,color: Color(0xFF4B0082)),);
+                  }
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 80),
                 child: Row(
                   children: <Widget>[
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: onJoin,
+                        onPressed: (){
+                          DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(widget.friendId);
+                          Map<String , dynamic> userStatus = {
+                            "videoCall": true,
+                            "callerName": FriendName,
+                            "audioCall": false,
+                          };
+                          documentReference.setData(userStatus).whenComplete(()
+                          {
+                            print("Call Status Created");
+                          });
+                          onJoin();
+                        },
                         child: Text('Start Video Calling'),
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(Color(0xFF4B0082)),
@@ -108,7 +141,21 @@ class IndexState extends State<IndexPage> {
                     // )
                   ],
                 ),
-              )
+              ),
+              GestureDetector(
+                onTap: (){
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: deviceData.screenHeight * 0.07,
+                  width: deviceData.screenWidth * 0.15,
+                  decoration: BoxDecoration(
+                      color: Color(0xFF4B0082),
+                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(25),topLeft: Radius.circular(25),bottomLeft: Radius.circular(25),topRight: Radius.circular(25))
+                  ),
+                  child: Icon(Icons.cancel,color: Colors.white,size: deviceData.screenWidth * 0.1,),
+                ),
+              ),
             ],
           ),
         ),

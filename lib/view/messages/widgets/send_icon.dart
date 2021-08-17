@@ -147,7 +147,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
               {
                 print("Message Notif Created");
               });
-                  BlocProvider.of<MessagesBloc>(context).add(
+              BlocProvider.of<MessagesBloc>(context).add(
                   MessageSent(message: widget.controller.text, friendId: widget.friendId));
             }
           },
