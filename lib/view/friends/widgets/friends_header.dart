@@ -67,7 +67,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     });
   }
 
-  callingNotif(String callerName) async {
+  /*callingNotif(String callerName) async {
     DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
     Map<String , dynamic> userStatus = {
       "videoCall": false,
@@ -78,7 +78,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     {
       print("Call Status Created");
     });
-  }
+  }*/
 
   String _formatDateTime(DateTime dateTime) {
     return DateFormat('h:mm a | d MMM').format(dateTime);
@@ -155,7 +155,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       ),
     );
   }
-  void notifyCalling(String senderName, String callingType) async {
+  /*void notifyCalling(String senderName, String callingType) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1,
@@ -164,7 +164,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
         body: "$callingType $senderName",
       ),
     );
-  }
+  }*/
   void messageStatusCollection() async {
     DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(uid);
     Map<String , dynamic> userStatus = {
@@ -241,7 +241,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                 }
                 return Container();
               }),
-          uid == null ? Container() : StreamBuilder(
+         /* uid == null ? Container() : StreamBuilder(
               stream: Firestore.instance.collection('users').document(uid).snapshots(),
               builder: (context, snapshot){
                 if (!snapshot.hasData) {
@@ -253,7 +253,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                 callingNotif(MyName);
                 return Container();
               }
-          ),
+          ),*/
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -293,3 +293,24 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     );
   }
 }
+
+/*showDialog(context: context, builder: (_) => AlertDialog(
+title: Icon(Icons.phone,color: Colors.white,size: deviceData.screenWidth * 0.08,),
+actions: [
+Center(child: Text("Hunain Ali is Calling",style: TextStyle(color: Colors.white,fontSize: deviceData.screenWidth * 0.05),)),
+SizedBox(height: deviceData.screenHeight * 0.02,),
+CupertinoDialogAction(child: GestureDetector(
+onTap: (){
+//Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage(friendId: widget.friend.userId,)));
+},
+child: Text("Receive",style: TextStyle(color: Colors.white,fontSize: deviceData.screenWidth * 0.05),)),),
+SizedBox(height: deviceData.screenHeight * 0.02,),
+CupertinoDialogAction(child: GestureDetector(
+onTap: (){
+Navigator.pop(context);
+},
+child: Text("Cancel",style: TextStyle(color: Colors.red,fontSize: deviceData.screenWidth * 0.05),)),)
+],
+elevation: 10.0,
+backgroundColor: Colors.deepPurple.withOpacity(0.2),
+));*/

@@ -190,6 +190,4 @@ class IndexState extends State<IndexPage> {
     final status = await permission.request();
     print(status);
   }
-
 }
-

@@ -179,7 +179,7 @@ class _PushMessagingExampleState extends State<PushMessagingExample> {
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       setState(() {
-        _homeScreenText = "Push Messaging token : $token";
+        _homeScreenText = "My Push Messaging token : $token";
       });
       print(_homeScreenText);
     });

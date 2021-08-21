@@ -76,14 +76,18 @@ class _MessageItemState extends State<MessageItem> {
                   padding: EdgeInsets.symmetric(
                       vertical: deviceData.screenHeight * 0.015,
                       horizontal: deviceData.screenHeight * 0.015),
-                  child: Text(
-                    widget.message,
-                    style: TextStyle(
-                      fontSize: deviceData.screenHeight * 0.018,
-                      color: widget.senderId == widget.friend.userId
-                          ? Colors.black
-                          : Colors.white,
-                    ),
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.message,
+                        style: TextStyle(
+                          fontSize: deviceData.screenHeight * 0.018,
+                          color: widget.senderId == widget.friend.userId
+                              ? Colors.black
+                              : Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -99,7 +103,7 @@ class messageImage extends StatefulWidget {
   String imgUrl;
   String receivedBy;
 
-  messageImage({this.imgUrl, this.receivedBy});
+  messageImage({this.imgUrl,this.receivedBy});
 
   @override
   _messageImageState createState() => _messageImageState();
@@ -142,7 +146,7 @@ class _messageImageState extends State<messageImage> {
                       bottomLeft: Radius.circular(20.0),
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(widget.imgUrl),
+                      image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/chat-app-c302a.appspot.com/o/8VTtiZZ8cXM4mqLoycnSyWdHz5fv?alt=media&token=c0d28cd1-7eab-4f7c-b9ef-7d696c8a5b00"),
                       fit: BoxFit.cover,
                     )),
               ),
@@ -154,7 +158,7 @@ class _messageImageState extends State<messageImage> {
           Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                widget.receivedBy,
+                "Received by : Hunain Ali",
                 style: TextStyle(color: Colors.indigo[900]),
               )),
         ],
@@ -162,14 +166,3 @@ class _messageImageState extends State<messageImage> {
     );
   }
 }
-
-/*
-StreamBuilder(
-stream: Firestore.instance.collection('users').document(widget.senderId).snapshots(),
-builder:(context , snapshot){
-if(!snapshot.hasData){
-return Text("Not Seen");
-}
-var userDocument = snapshot.data;
-return Text(userDocument[widget.friend.userId + "_" + 'lastMessageSeen']);
-}),*/

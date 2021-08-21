@@ -15,9 +15,10 @@ class SendIcon extends StatefulWidget {
     Key key,
     @required this.controller,
     @required this.friendId,
-    @required this.myName,
+    @required this.myName, this.getSuggestedReplies,
   }) : super(key: key);
 
+  final Function  getSuggestedReplies;
   final TextEditingController controller;
   final String friendId;
   final String myName;
@@ -149,6 +150,11 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
               });
               BlocProvider.of<MessagesBloc>(context).add(
                   MessageSent(message: widget.controller.text, friendId: widget.friendId));
+
+          Timer(Duration(seconds: 3),(){
+            widget.getSuggestedReplies();
+          });
+
             }
           },
         ),

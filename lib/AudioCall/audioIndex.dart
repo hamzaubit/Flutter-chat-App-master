@@ -149,10 +149,10 @@ class IndexState extends State<audioIndexPage> {
                   width: deviceData.screenWidth * 0.15,
                   decoration: BoxDecoration(
                       color: Color(0xFF4B0082),
-                    borderRadius: BorderRadius.only(bottomRight: Radius.circular(25),topLeft: Radius.circular(25),bottomLeft: Radius.circular(25),topRight: Radius.circular(25))
+                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(25),topLeft: Radius.circular(25),bottomLeft: Radius.circular(25),topRight: Radius.circular(25))
                   ),
                   child: Icon(Icons.cancel,color: Colors.white,size: deviceData.screenWidth * 0.1,),
-        ),
+                ),
               ),
             ],
           ),
