@@ -127,7 +127,7 @@ class _MessageInputState extends State<MessageInput>
         Radius.circular(deviceData.screenWidth * 0.05),
       ),
       child: Container(
-        width: deviceData.screenWidth * 0.65,
+        width: deviceData.screenWidth * 0.73,
         child: TextField(
           textCapitalization: TextCapitalization.sentences,
           controller: widget.controller,

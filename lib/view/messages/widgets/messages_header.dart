@@ -1,6 +1,7 @@
 import 'package:chat/AudioCall/audioIndex.dart';
 import 'package:chat/utils/functions.dart';
 import 'package:chat/videoCall/index.dart';
+import 'package:chat/view/messages/widgets/profileScreen.dart';
 import 'package:chat/view/widgets/popup_menu.dart';
 import 'package:chat/view/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -37,18 +38,36 @@ class _MessagesHeaderState extends State<MessagesHeader> {
           BackIcon(),
           Row(
             children: [
-              AvatarIcon(
-                user: widget.friend,
-                radius: 0.05,
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => profileScreen(
+                    name: widget.friend.name,
+                    img: widget.friend.imgUrl,
+                    email: widget.friend.email,
+                  )));
+                },
+                child: AvatarIcon(
+                  user: widget.friend,
+                  radius: 0.05,
+                ),
               ),
               SizedBox(width: deviceData.screenWidth * 0.015),
               Column(
                 children: [
-                  Text(
-                    Functions.getFirstName(widget.friend.name),
-                    style: kArialFontStyle.copyWith(
-                      fontSize: deviceData.screenHeight * 0.022,
-                      color: Colors.white,
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => profileScreen(
+                        name: widget.friend.name,
+                        img: widget.friend.imgUrl,
+                        email: widget.friend.email,
+                      )));
+                    },
+                    child: Text(
+                      Functions.getFirstName(widget.friend.name),
+                      style: kArialFontStyle.copyWith(
+                        fontSize: deviceData.screenHeight * 0.022,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   SizedBox(height: deviceData.screenHeight * 0.003),

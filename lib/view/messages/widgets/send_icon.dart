@@ -128,12 +128,12 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
         padding: EdgeInsets.only(
             top: deviceData.screenHeight * 0.01,
             bottom: deviceData.screenHeight * 0.01,
-            right: deviceData.screenWidth * 0.02),
+            right: deviceData.screenWidth * 0.04),
         child: InkResponse(
           child: Icon(
             Icons.send,
             color: kBackgroundButtonColor,
-            size: deviceData.screenWidth * 0.065,
+            size: deviceData.screenWidth * 0.07,
           ),
           onTap: () async {
             if (widget.controller.text.trim().isNotEmpty) {

@@ -90,19 +90,6 @@ class IndexState extends State<audioIndexPage> {
                   )*/
                 ],
               ),
-              StreamBuilder(
-                  stream: Firestore.instance.collection('callingNotif').document(widget.friendId).snapshots(),
-                  builder: (context, snapshot){
-                    if(!snapshot.hasData){
-                      var userDocument = snapshot.data;
-                      FriendName = userDocument['callerName'];
-                      return Text(userDocument['callerName'].toString(),style: TextStyle(fontSize: deviceData.screenWidth * 0.05,color: Color(0xFF4B0082)),);
-                    }
-                    var userDocument = snapshot.data;
-                    FriendName = userDocument['callerName'];
-                    return Text(userDocument['callerName'].toString(),style: TextStyle(fontSize: deviceData.screenWidth * 0.05,color: Color(0xFF4B0082)),);
-                  }
-              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 80),
                 child: Row(

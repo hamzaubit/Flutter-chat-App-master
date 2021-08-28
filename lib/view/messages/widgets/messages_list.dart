@@ -457,7 +457,7 @@ class _MessagesListState extends State<MessagesList> {
                   SizedBox(
                     width: deviceData.screenHeight * 0.020,
                   ),
-                  GestureDetector(
+                  /*GestureDetector(
                     onTap: () {
                       getUserId();
                       getImage();
@@ -475,7 +475,7 @@ class _MessagesListState extends State<MessagesList> {
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                   SendIcon(
                     controller: _textController,
                     friendId: widget.friend.userId,
@@ -485,7 +485,7 @@ class _MessagesListState extends State<MessagesList> {
                 ],
               ),
             ),
-//            Smart Reply Widget
+            //Smart Reply Widget
             Container(
               margin: EdgeInsets.only(top: 24),
               child: Wrap(
@@ -505,7 +505,6 @@ class _MessagesListState extends State<MessagesList> {
                             'senderId': uid,
                             'time': "${DateTime.now().toUtc().millisecondsSinceEpoch}",
                           });
-
                           Firestore.instance.collection('users').document(widget.friend.userId).collection('contacts').document(uid).collection('messages').document("${DateTime.now().toUtc().millisecondsSinceEpoch}")
                               .setData({
                             'message':s,
