@@ -22,6 +22,8 @@ import "dart:io";
 
 import 'package:smart_reply/smart_reply.dart';
 
+import 'mediaScreen.dart';
+
 class MessagesList extends StatefulWidget {
   final User friend;
 
@@ -140,21 +142,7 @@ class _MessagesListState extends State<MessagesList> {
     });
   }
 
-  String _chars =
-      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-  Random _rnd = Random();
 
-  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
-      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-
-  Future getImage() async {
-    var imagePicker = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      smapleImage = imagePicker;
-      uploadImage();
-      //forDisableButton = true;
-    });
-  }
 
   void messageNotifData(bool message, String senderName) {
     DocumentReference documentReference = Firestore.instance
@@ -169,19 +157,6 @@ class _MessagesListState extends State<MessagesList> {
     });
   }
 
-  Future uploadImage() async {
-    //SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() async {
-      final StorageReference firebaseStorageRef =
-          FirebaseStorage.instance.ref().child(getRandomString(28));
-      final StorageUploadTask task = firebaseStorageRef.putFile(smapleImage);
-      url = await (await task.onComplete).ref.getDownloadURL();
-      print(url);
-      print("Image uploaded on Firebase Storage");
-      mediaMessage();
-    });
-  }
-
   void notify() async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -193,23 +168,7 @@ class _MessagesListState extends State<MessagesList> {
     );
   }
 
-  mediaMessage() {
-    DocumentReference documentReference = Firestore.instance
-        .collection("users")
-        .document(widget.friend.userId)
-        .collection("contacts")
-        .document(uid)
-        .collection("messages")
-        .document("${DateTime.now().toUtc().millisecondsSinceEpoch}");
-    Map<String, dynamic> students = {
-      "image": url,
-      "senderId": uid,
-      "receivedBy": widget.friend.name,
-    };
-    documentReference.setData(students).whenComplete(() {
-      print("Media MessageCreated");
-    });
-  }
+
 
   @override
   void dispose() {
@@ -457,10 +416,12 @@ class _MessagesListState extends State<MessagesList> {
                   SizedBox(
                     width: deviceData.screenHeight * 0.020,
                   ),
-                  /*GestureDetector(
+                  GestureDetector(
                     onTap: () {
-                      getUserId();
-                      getImage();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => mediaMessageScreen(userName: widget.friend.name,
+                        userId: widget.friend.userId,
+                        myId: uid,
+                      )));
                     },
                     child: Container(
                       padding: EdgeInsets.only(
@@ -475,7 +436,7 @@ class _MessagesListState extends State<MessagesList> {
                         ),
                       ),
                     ),
-                  ),*/
+                  ),
                   SendIcon(
                     controller: _textController,
                     friendId: widget.friend.userId,
@@ -570,71 +531,3 @@ class _MessagesListState extends State<MessagesList> {
   }
 }
 
-class messageImage extends StatefulWidget {
-  String imgUrl;
-  String receivedBy;
-
-  messageImage({this.imgUrl, this.receivedBy});
-
-  @override
-  _messageImageState createState() => _messageImageState();
-}
-
-class _messageImageState extends State<messageImage> {
-  @override
-  Widget build(BuildContext context) {
-    DeviceData deviceData = DeviceData.init(context);
-    return Container(
-      height: deviceData.screenHeight * 0.28,
-      width: MediaQuery.of(context).size.width - 80,
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: deviceData.screenHeight * 0.25,
-                width: MediaQuery.of(context).size.width - 80,
-                decoration: BoxDecoration(
-                    borderRadius: new BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                  bottomRight: Radius.circular(20.0),
-                  bottomLeft: Radius.circular(20.0),
-                )),
-                child: Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.indigo[900],
-                )),
-              ),
-              Container(
-                height: deviceData.screenHeight * 0.25,
-                width: MediaQuery.of(context).size.width - 80,
-                decoration: BoxDecoration(
-                    borderRadius: new BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                      bottomRight: Radius.circular(20.0),
-                      bottomLeft: Radius.circular(20.0),
-                    ),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/chat-app-c302a.appspot.com/o/zhg7DYL1NLiw2CHCQ2EmTBZ8h6HM?alt=media&token=4f9558ea-95ab-41a8-b043-0cf2d893778e"),
-                      fit: BoxFit.cover,
-                    )),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: deviceData.screenHeight * 0.01,
-          ),
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Received by : Hunain Ali",
-                style: TextStyle(color: Colors.indigo[900]),
-              )),
-        ],
-      ),
-    );
-  }
-}
