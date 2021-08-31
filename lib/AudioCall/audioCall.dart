@@ -296,7 +296,9 @@ class _audioCallPageState extends State<audioCallPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Agora Flutter QuickStart'),
+        backgroundColor: Color(0xFF4B0082),
+        title: Text('Audio Calling'),
+        centerTitle: true,
       ),
       backgroundColor: Colors.black,
       body: Center(

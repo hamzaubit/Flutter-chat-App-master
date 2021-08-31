@@ -190,7 +190,7 @@ class _mediaMessageScreenState extends State<mediaMessageScreen> {
                     ),
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                        reverse: false,
+                        reverse: true,
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context , index){
                           return GestureDetector(
