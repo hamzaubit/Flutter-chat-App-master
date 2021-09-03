@@ -5,6 +5,7 @@ import 'package:chat/view/messages/widgets/profileScreen.dart';
 import 'package:chat/view/widgets/popup_menu.dart';
 import 'package:chat/view/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chat/models/user.dart';
@@ -14,17 +15,32 @@ import 'package:chat/view/widgets/avatar_icon.dart';
 
 class MessagesHeader extends StatefulWidget {
   final User friend;
-  const MessagesHeader({Key key, @required this.friend,}) : super(key: key);
+  const MessagesHeader({Key key, @required this.friend}) : super(key: key);
 
   @override
   _MessagesHeaderState createState() => _MessagesHeaderState();
 }
 
 class _MessagesHeaderState extends State<MessagesHeader> {
+  String MyName;
+
+  String uid;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  void getUserId() async {
+    final FirebaseUser user = await auth.currentUser();
+    uid = user.uid;
+    print("User Id is : "+uid.toString());
+  }
+  @override
+  void initState() {
+    getUserId();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceData = DeviceData.init(context);
-
     return Padding(
       padding: EdgeInsets.only(
         top: deviceData.screenHeight * 0.06,
@@ -54,6 +70,22 @@ class _MessagesHeaderState extends State<MessagesHeader> {
               SizedBox(width: deviceData.screenWidth * 0.015),
               Column(
                 children: [
+                  /*uid == null
+                      ? Container()
+                      : StreamBuilder(
+                      stream: Firestore.instance
+                          .collection('users')
+                          .document(uid)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Container();
+                        }
+                        var userDocument = snapshot.data;
+                        MyName = userDocument['name'];
+                        print("Mera Naam Yeh Hai : ${MyName}");
+                        return Container();
+                      }),*/
                   GestureDetector(
                     onTap: (){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => profileScreen(
@@ -89,7 +121,9 @@ class _MessagesHeaderState extends State<MessagesHeader> {
           SizedBox(width: deviceData.screenWidth * 0.12),
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage(friendId: widget.friend.userId,)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage(
+                friendId: widget.friend.userId,
+              )));
             },
             child: Container(
               width: deviceData.screenHeight * 0.05,

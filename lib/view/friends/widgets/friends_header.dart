@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -152,19 +153,21 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
         channelKey: "key1",
         title: "Smart Chat",
         body: "Message From $senderName",
+        displayOnBackground: true,
       ),
     );
   }
-  /*void notifyCalling(String senderName, String callingType) async {
+  void notifyCalling(String senderName, String callingType) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1,
         channelKey: "key1",
         title: "Smart Chat",
         body: "$callingType $senderName",
+        displayOnBackground: true,
       ),
     );
-  }*/
+  }
   void messageStatusCollection() async {
     DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(uid);
     Map<String , dynamic> userStatus = {
@@ -254,13 +257,71 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                 return Container();
               }
           ),*/
+         uid == null ? Container() :
+         StreamBuilder(
+           stream: Firestore.instance.collection('callingNotif').document(uid).snapshots(),
+           builder: (context, snapshot){
+             if(!snapshot.hasData){
+               return Container();
+             }
+             var userDocument = snapshot.data;
+             if(userDocument['audioCall'] == true){
+               notifyCalling("Audio Calling",userDocument['callerName']);
+               /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
+               Map<String , dynamic> userStatus = {
+                 "videoCall": false,
+                 "callerName": "",
+                 "audioCall": false,
+               };
+               documentReference.setData(userStatus).whenComplete(()
+               {
+                 print("Call Status Created");
+               });*/
+               FlutterRingtonePlayer.playRingtone();
+               AwesomeNotifications().actionStream.listen((receivedNotifiction){
+                 Navigator.of(context).pushNamed(
+                   '/audioCallingPage',
+                 );
+               });
+               return Container();
+             }
+             else if(userDocument['videoCall'] == true){
+               notifyCalling("Video Calling",userDocument['callerName']);
+               /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
+               Map<String , dynamic> userStatus = {
+                 "videoCall": false,
+                 "callerName": "",
+                 "audioCall": false,
+               };
+               documentReference.setData(userStatus).whenComplete(()
+               {
+                 print("Call Status Created");
+               });*/
+               FlutterRingtonePlayer.playRingtone();
+               AwesomeNotifications().actionStream.listen((receivedNotifiction){
+                 Navigator.of(context).pushNamed(
+                   '/videoCallingPage',
+                 );
+               });
+               return Container();
+             }
+             else{
+               return Container();
+             }
+           }
+         ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                "Let's Chat \nwith SmartChat",
-                style: kTitleTextStyle.copyWith(
-                  fontSize: deviceData.screenHeight * 0.028,
+              GestureDetector(
+                onTap: (){
+                  FlutterRingtonePlayer.stop();
+                },
+                child: Text(
+                  "Let's Chat \nwith SmartChat",
+                  style: kTitleTextStyle.copyWith(
+                    fontSize: deviceData.screenHeight * 0.028,
+                  ),
                 ),
               ),
               PopUpMenu(),
@@ -293,6 +354,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     );
   }
 }
+
 
 /*showDialog(context: context, builder: (_) => AlertDialog(
 title: Icon(Icons.phone,color: Colors.white,size: deviceData.screenWidth * 0.08,),

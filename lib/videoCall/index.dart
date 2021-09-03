@@ -4,7 +4,9 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:chat/models/user.dart';
 import 'package:chat/view/utils/device_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'call.dart';
@@ -25,6 +27,20 @@ class IndexState extends State<IndexPage> {
   String FriendName;
 
   ClientRole _role = ClientRole.Broadcaster;
+
+  String uid;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  void getUserId() async {
+    final FirebaseUser user = await auth.currentUser();
+    uid = user.uid;
+    print("User Id is : "+uid.toString());
+  }
+  @override
+  void initState() {
+    getUserId();
+    super.initState();
+  }
   @override
   void dispose() {
     // dispose input controller
@@ -115,10 +131,20 @@ class IndexState extends State<IndexPage> {
                           DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(widget.friendId);
                           Map<String , dynamic> userStatus = {
                             "videoCall": true,
-                            "callerName": FriendName,
+                            //"callerName": "",
                             "audioCall": false,
                           };
-                          documentReference.setData(userStatus).whenComplete(()
+                          documentReference.updateData(userStatus).whenComplete(()
+                          {
+                            print("Call Status Created");
+                          });
+                          DocumentReference documentReference1 = Firestore.instance.collection("callingNotif").document(widget.friendId);
+                          Map<String , dynamic> userStatus1 = {
+                            "videoCall": false,
+                            //"callerName": "",
+                            "audioCall": false,
+                          };
+                          documentReference1.updateData(userStatus1).whenComplete(()
                           {
                             print("Call Status Created");
                           });
@@ -145,6 +171,7 @@ class IndexState extends State<IndexPage> {
               GestureDetector(
                 onTap: (){
                   Navigator.pop(context);
+                  FlutterRingtonePlayer.stop();
                 },
                 child: Container(
                   height: deviceData.screenHeight * 0.07,

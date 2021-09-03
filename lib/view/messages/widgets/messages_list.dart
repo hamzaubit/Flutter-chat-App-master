@@ -200,6 +200,16 @@ class _MessagesListState extends State<MessagesList> {
                       }
                       var userDocument = snapshot.data;
                       MyName = userDocument['name'];
+                      DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(widget.friend.userId);
+                      Map<String , dynamic> userStatus = {
+                        "videoCall": false,
+                        "callerName": MyName,
+                        "audioCall": false,
+                      };
+                      documentReference.setData(userStatus).whenComplete(()
+                      {
+                        print("Call Status Created");
+                      });
                       print(MyName);
                       return Container();
                     }),
