@@ -279,10 +279,10 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                  print("Call Status Created");
                });*/
                FlutterRingtonePlayer.playRingtone();
-               AwesomeNotifications().actionStream.listen((receivedNotifiction){
+               /*AwesomeNotifications().actionStream.listen((receivedNotifiction){
                  //Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));
                  Navigator.pushNamed(context, '/audioCallingPage' );
-               });
+               });*/
                return Container();
              }
              else if(userDocument['videoCall'] == true){
@@ -298,12 +298,12 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                  print("Call Status Created");
                });*/
                FlutterRingtonePlayer.playRingtone();
-               AwesomeNotifications().actionStream.listen((receivedNotifiction){
+               /*AwesomeNotifications().actionStream.listen((receivedNotifiction){
                  Navigator.pushNamed(context, '/videoCallingPage' );
-                 /*Navigator.of(context).pushNamed(
+                 *//*Navigator.of(context).pushNamed(
                    '/videoCallingPage',
-                 );*/
-               });
+                 );*//*
+               });*/
                return Container();
              }
              else{
