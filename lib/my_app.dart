@@ -34,8 +34,8 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         routes: {
-          '/audioCallingPage' :(context)=>audioIndexPage(friendId: "123456",),
-          '/videoCallingPage' :(context)=>IndexPage(friendId: "123456",),
+          '/audioCallingPage' :(context)=> audioIndexPage(),
+          '/videoCallingPage' :(context)=> IndexPage(),
         },
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

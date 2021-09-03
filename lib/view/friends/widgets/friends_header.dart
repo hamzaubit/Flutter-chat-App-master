@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:chat/AudioCall/audioIndex.dart';
 import 'package:chat/models/user.dart';
 import 'package:chat/videoCall/index.dart';
 import 'package:chat/view/friends/widgets/avatar_button.dart';
@@ -279,9 +280,8 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                });*/
                FlutterRingtonePlayer.playRingtone();
                AwesomeNotifications().actionStream.listen((receivedNotifiction){
-                 Navigator.of(context).pushNamed(
-                   '/audioCallingPage',
-                 );
+                 //Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));
+                 Navigator.pushNamed(context, '/audioCallingPage' );
                });
                return Container();
              }
@@ -299,9 +299,10 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                });*/
                FlutterRingtonePlayer.playRingtone();
                AwesomeNotifications().actionStream.listen((receivedNotifiction){
-                 Navigator.of(context).pushNamed(
+                 Navigator.pushNamed(context, '/videoCallingPage' );
+                 /*Navigator.of(context).pushNamed(
                    '/videoCallingPage',
-                 );
+                 );*/
                });
                return Container();
              }

@@ -136,6 +136,7 @@ class IndexState extends State<audioIndexPage> {
                           {
                             print("Call Status Created");
                           });
+                          FlutterRingtonePlayer.stop();
                           onJoin();
                         },
                         child: Text('Start Audio Calling'),

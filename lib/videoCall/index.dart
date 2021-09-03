@@ -148,6 +148,7 @@ class IndexState extends State<IndexPage> {
                           {
                             print("Call Status Created");
                           });
+                          FlutterRingtonePlayer.stop();
                           onJoin();
                         },
                         child: Text('Start Video Calling'),
