@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/bloc_observer.dart';
 import 'package:chat/services/notifications.dart';
@@ -19,6 +18,7 @@ void main() {
           channelName: "SmartChat Notification",
           channelDescription: "Notification Description",
           defaultColor: Colors.deepPurple,
+          playSound: true,
 
         )
       ]

@@ -158,17 +158,6 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       ),
     );
   }
-  void notifyCalling(String senderName, String callingType) async {
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 1,
-        channelKey: "key1",
-        title: "Smart Chat",
-        body: "$callingType $senderName",
-        displayOnBackground: true,
-      ),
-    );
-  }
   void messageStatusCollection() async {
     DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(uid);
     Map<String , dynamic> userStatus = {
@@ -232,6 +221,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                 var userDocument = snapshot.data;
                 if(userDocument['message'] == true){
                   notifyMessage(userDocument['messageSender']);
+                  FlutterRingtonePlayer.playNotification();
                   DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(uid);
                   Map<String , dynamic> userStatus = {
                     "message": false,
@@ -258,59 +248,6 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                 return Container();
               }
           ),*/
-         uid == null ? Container() :
-         StreamBuilder(
-           stream: Firestore.instance.collection('callingNotif').document(uid).snapshots(),
-           builder: (context, snapshot){
-             if(!snapshot.hasData){
-               return Container();
-             }
-             var userDocument = snapshot.data;
-             if(userDocument['audioCall'] == true){
-               notifyCalling("Audio Calling",userDocument['callerName']);
-               /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
-               Map<String , dynamic> userStatus = {
-                 "videoCall": false,
-                 "callerName": "",
-                 "audioCall": false,
-               };
-               documentReference.setData(userStatus).whenComplete(()
-               {
-                 print("Call Status Created");
-               });*/
-               FlutterRingtonePlayer.playRingtone();
-               /*AwesomeNotifications().actionStream.listen((receivedNotifiction){
-                 //Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));
-                 Navigator.pushNamed(context, '/audioCallingPage' );
-               });*/
-               return Container();
-             }
-             else if(userDocument['videoCall'] == true){
-               notifyCalling("Video Calling",userDocument['callerName']);
-               /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
-               Map<String , dynamic> userStatus = {
-                 "videoCall": false,
-                 "callerName": "",
-                 "audioCall": false,
-               };
-               documentReference.setData(userStatus).whenComplete(()
-               {
-                 print("Call Status Created");
-               });*/
-               FlutterRingtonePlayer.playRingtone();
-               /*AwesomeNotifications().actionStream.listen((receivedNotifiction){
-                 Navigator.pushNamed(context, '/videoCallingPage' );
-                 *//*Navigator.of(context).pushNamed(
-                   '/videoCallingPage',
-                 );*//*
-               });*/
-               return Container();
-             }
-             else{
-               return Container();
-             }
-           }
-         ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[

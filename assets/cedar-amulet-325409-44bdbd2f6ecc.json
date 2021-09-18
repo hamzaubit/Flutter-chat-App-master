@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "cedar-amulet-325409",
+  "private_key_id": "44bdbd2f6eccb408d7cb3391de4b643aa6b38bbd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCMGRZqu8HqOsB8\n6k2OJS6qm0qFcWodw4D3rnHK/hCcQd/4nvJUvDUcva8APbm5tZoi73nWIDbwbLgb\nsP8gcAefzbrKElsK/2yg1K9QIq9YbDF61Tea1lRC9V7XbuBDvPeUOKH7s3N2+AZC\nU5qTXL4MmJHn7MTlsA0/phSkgMF5ogzsB65NZsAvfjl/6VywOIk1mbPjpuO27fUN\nPL1bJ9cn0kAzBz3N56dUDsR4zKa7Yy34B+O4R0ZsEirMXu1kovJ4aT1JOAlFncM+\nOcctuDuhcHoPLqj/OmiKZv0y4LjODkCJkvCEgpjU41SXIG94jmA+1R3cG5bBys7d\nWgL2a7nJAgMBAAECggEABTEh0ktKhLBwNUDmpmOs3tA5+weIt/kolKU/nNb9DRlo\n4DkdwHOoITxLWb4v3ZjEEVLgKEYR2yegTBBraAuW0L6KU1ZKTvZH048GPzlF18hM\nriFsOd4DCec3gFLg10nPwAu4PxB3sTtAWiFoi1kGxwc5cwekhWGYoBj6z1zhLq17\ncjuzZrqOaHxOKLyNranMMLoOUCfXsO/qussOrPeUQJQCJ3k+zPOAOzOkehfAprqT\nj2/+uTvf0uuVdd3KAK5WKUAiBEgGD+M4plMFTVLG5Xa6thFEdyyozEdyifG4jUkU\nJbqDZMW+DqXXy+f0ZMS5VRzXs8SIxda6XsJFDo8znQKBgQDFNx7jwvj2Yy64UMSf\nIpo76XxrdyORC8SA2AD86hBOP0ODmBAzEmZvahXUu7nKe2V43fShB8rLnTmkvL1o\nWMJwfzrz4b3zGU1hN0tDZrMysSxzO25aAIbJa3qRLZ7+oKnx3IOuik+jO9Zxnx/R\n5s368D08uoel4lr2ocU8yxXGRQKBgQC124ZAJxcNfUmqcga8UXYoj7tAwoGZk3YD\nKpVtbvu82yTOvJl3ipeEu2xqAj9J7MAluX4zxuaQEYzG8UZObIXnOyi5kCiZdpFO\nz/jN/4+DPAm4RRbQwN54oOMc5l9R4R5GACCcMwzY8IUUUwTGEtvsAROXLbolRaBB\neuNLDI6PtQKBgQC7zKmVqmz586jhy8fw4jqNIuJgU6uCy/nr18XZEetFF+lqvrtu\nZu802YjAc6OQtcEDQBlb3te23Zmuzixv2VYPWpkA9M61WDrfgJAjNwEeHKl/cfC7\ntBSmabrl1NO7FbO/pYWgCAWeI7UpraXXdDph47PsyJOz28FTaukv4xRxIQKBgFFx\nXLBCUVqjL2h75HRV7xq/M9cOxMeoeIN2gLEfsPGlGtjTMc+Na8nvvd/D3eAXfP3o\nEpLRktQWZ/t4dkoM4/LoVZa07tm7ddvb28s1lmnpa1jw6ATZO0i+lLeOnEWpEcu7\npt8NJcXKAW9Wtp6WN5N77/AWdHTYt6pbhItJtla5AoGAJY/8qLnFjqgqilPqy236\ncp3jbinzf6DbvuY7e/n4OncNGFtngr5/jZysT2C95Ndcaclc+6U9EncavEnsJH8n\nuXjBZoRRPfzG1g+Li1zJYwE/LTUq/zJHnGnAlTz9dtssdvqU/Y+opqLip7zI/6qx\nWAzTMIU/y742doijGTwH+xQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "mychatbot@cedar-amulet-325409.iam.gserviceaccount.com",
+  "client_id": "111294206226868555000",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mychatbot%40cedar-amulet-325409.iam.gserviceaccount.com"
+}

@@ -32,11 +32,11 @@ class _EditFormViewState extends State<EditFormView> {
   File pickedImage;
   bool imageIsPicked = false;
   String selectedAvatarPath;
+  bool theme = false;
 
   @override
   Widget build(BuildContext context) {
     final deviceData = DeviceData.init(context);
-
     return SingleChildScrollView(
       child: FadeIn(
         duration: Duration(milliseconds: 500),

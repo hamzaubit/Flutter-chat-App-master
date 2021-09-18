@@ -1,6 +1,7 @@
 import 'package:chat/AudioCall/audioIndex.dart';
 import 'package:chat/service_locator.dart';
 import 'package:chat/videoCall/index.dart';
+import 'package:chat/view/chatBot/chatBot.dart';
 import 'package:chat/view/notification/bloc/notification_bloc.dart';
 import 'package:chat/view/register/bloc/account_bloc.dart';
 import 'package:chat/view/utils/constants.dart';
@@ -33,12 +34,13 @@ class _MyAppState extends State<MyApp> {
         //     ),
       ],
       child: MaterialApp(
-        routes: {
+        /*routes: {
           '/audioCallingPage' :(context)=> audioIndexPage(),
           '/videoCallingPage' :(context)=> IndexPage(),
-        },
+        },*/
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
+        darkTheme: ThemeData(
+          brightness: Brightness.light,
           accentColor: kBackgroundColor,
         ),
         home: SplashScreen(),

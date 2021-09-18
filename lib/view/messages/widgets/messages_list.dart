@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:image_picker/image_picker.dart';
 import "dart:io";
 
@@ -50,8 +51,8 @@ class _MessagesListState extends State<MessagesList> {
   String fcmToken;
   bool heartRain = false;
   String MyName;
-
   List<String> _suggestedReplies = [];
+  List<String> getLastMsg = [];
 
   // Platform messages are asynchronous, so we initialize in an async method.
 
@@ -71,7 +72,11 @@ class _MessagesListState extends State<MessagesList> {
       print(textMessageLists[i].text);
     }
 
-    print(textMessageLists.length);
+    print('Message');
+
+    textMessageLists = [textMessageLists[0]];
+
+    print(textMessageLists[0].text);
 
     SmartReply.suggestReplies(textMessageLists).then((replies) {
       print(replies);
@@ -122,6 +127,18 @@ class _MessagesListState extends State<MessagesList> {
     }
   }
 
+  void notifyCalling(String senderName, String callingType) async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1,
+        channelKey: "key1",
+        title: "Smart Chat",
+        body: "$callingType $senderName",
+        displayOnBackground: true,
+      ),
+    );
+  }
+
   void _startTimer() {
     _counter = 1;
     if (_timer != null) {
@@ -135,14 +152,11 @@ class _MessagesListState extends State<MessagesList> {
           _timer.cancel();
           print("Created");
           messageNotifData(false, "");
-
           //fcmTokenForNotification(fcmToken);
         }
       });
     });
   }
-
-
 
   void messageNotifData(bool message, String senderName) {
     DocumentReference documentReference = Firestore.instance
@@ -167,7 +181,17 @@ class _MessagesListState extends State<MessagesList> {
       ),
     );
   }
-
+  void smartNotif(String smartMsg) async {
+    FlutterRingtonePlayer.playNotification();
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1,
+        channelKey: "key1",
+        title: widget.friend.name,
+        body: "I am ${smartMsg} talk to you later",
+      ),
+    );
+  }
 
 
   @override
@@ -191,6 +215,62 @@ class _MessagesListState extends State<MessagesList> {
                 ? Container()
                 : StreamBuilder(
                     stream: Firestore.instance
+                        .collection('callingNotif')
+                        .document(uid)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Container();
+                      }
+                      var userDocument = snapshot.data;
+                      if (userDocument['audioCall'] == true) {
+                        notifyCalling(
+                            "Audio Calling", userDocument['callerName']);
+                        /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
+               Map<String , dynamic> userStatus = {
+                 "videoCall": false,
+                 "callerName": "",
+                 "audioCall": false,
+               };
+               documentReference.setData(userStatus).whenComplete(()
+               {
+                 print("Call Status Created");
+               });*/
+                        FlutterRingtonePlayer.playRingtone();
+                        /*AwesomeNotifications().actionStream.listen((receivedNotifiction){
+                 //Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));
+                 Navigator.pushNamed(context, '/audioCallingPage' );
+               });*/
+                        return Container();
+                      } else if (userDocument['videoCall'] == true) {
+                        notifyCalling(
+                            "Video Calling", userDocument['callerName']);
+                        /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
+               Map<String , dynamic> userStatus = {
+                 "videoCall": false,
+                 "callerName": "",
+                 "audioCall": false,
+               };
+               documentReference.setData(userStatus).whenComplete(()
+               {
+                 print("Call Status Created");
+               });*/
+                        FlutterRingtonePlayer.playRingtone();
+                        /*AwesomeNotifications().actionStream.listen((receivedNotifiction){
+                 Navigator.pushNamed(context, '/videoCallingPage' );
+                 */ /*Navigator.of(context).pushNamed(
+                   '/videoCallingPage',
+                 );*/ /*
+               });*/
+                        return Container();
+                      } else {
+                        return Container();
+                      }
+                    }),
+            uid == null
+                ? Container()
+                : StreamBuilder(
+                    stream: Firestore.instance
                         .collection('users')
                         .document(uid)
                         .snapshots(),
@@ -200,14 +280,15 @@ class _MessagesListState extends State<MessagesList> {
                       }
                       var userDocument = snapshot.data;
                       MyName = userDocument['name'];
-                      DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(widget.friend.userId);
-                      Map<String , dynamic> userStatus = {
+                      DocumentReference documentReference = Firestore.instance
+                          .collection("callingNotif")
+                          .document(widget.friend.userId);
+                      Map<String, dynamic> userStatus = {
                         "videoCall": false,
                         "callerName": MyName,
                         "audioCall": false,
                       };
-                      documentReference.setData(userStatus).whenComplete(()
-                      {
+                      documentReference.setData(userStatus).whenComplete(() {
                         print("Call Status Created");
                       });
                       print(MyName);
@@ -237,7 +318,11 @@ class _MessagesListState extends State<MessagesList> {
                                   itemCount: messages.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
+
                                     final message = messages[index];
+                                    if(index == 0)
+                                      getSuggestedReplies();
+
 
                                     return MessageItem(
                                       showFriendImage:
@@ -321,6 +406,19 @@ class _MessagesListState extends State<MessagesList> {
                       var userDocument = snapshot.data;
                       if (userDocument['status'] == "Typing...") {
                         notify();
+                        final firestoreInstance = Firestore.instance;
+                        firestoreInstance.collection('users')
+                            .document(widget.friend.userId)
+                            .collection('contacts')
+                            .document(uid)
+                            .collection('messages')
+                            .document(
+                            "${DateTime.now().toUtc().millisecondsSinceEpoch}").get().then((value) => {
+                           //print("Mera Last Message Yeh Hai : ${value.data.values.last}"),
+                          getLastMsg = value.data.values.last,
+                          print("Mera Last Message Yeh Hai : ${getLastMsg}"),
+                        });
+                        FlutterRingtonePlayer.playNotification();
                         return Container(
                           height: deviceData.screenHeight * 0.06,
                           width: deviceData.screenWidth * 0.15,
@@ -424,14 +522,18 @@ class _MessagesListState extends State<MessagesList> {
                   ),
                   MessageInput(controller: _textController),
                   SizedBox(
-                    width: deviceData.screenHeight * 0.020,
+                    width: deviceData.screenHeight * 0.010,
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => mediaMessageScreen(userName: widget.friend.name,
-                        userId: widget.friend.userId,
-                        myId: uid,
-                      )));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => mediaMessageScreen(
+                                    userName: widget.friend.name,
+                                    userId: widget.friend.userId,
+                                    myId: uid,
+                                  )));
                     },
                     child: Container(
                       padding: EdgeInsets.only(
@@ -447,11 +549,36 @@ class _MessagesListState extends State<MessagesList> {
                       ),
                     ),
                   ),
-                  SendIcon(
-                    controller: _textController,
-                    friendId: widget.friend.userId,
-                    myName: MyName,
-                    getSuggestedReplies: getSuggestedReplies,
+                  GestureDetector(
+                    onTap: (){
+                      /*StreamBuilder(
+                          stream: Firestore.instance
+                              .collection('userStatus')
+                              .document(widget.friend.userId)
+                              .snapshots(),
+// ignore: missing_return
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              var userDocument = snapshot.data;
+                              if (userDocument['status'] == "Online" ||
+                                  userDocument['status'] == "Typing...") {
+                                return Container(height: 10,width: 10,);
+                              }
+                            } else {
+                              smartNotif("Busy Right Now");
+                              return Container(height: 10,width: 10,);
+                            }
+                          });*/
+                    },
+                    child: Container(
+                      child: SendIcon(
+                        controller: _textController,
+                        friendId: widget.friend.userId,
+                        myName: MyName,
+                        getSuggestedReplies: getSuggestedReplies,
+                        friendName: widget.friend.name,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -470,18 +597,41 @@ class _MessagesListState extends State<MessagesList> {
                         child: Text(s),
                         onPressed: () {
                           print(s);
-                          Firestore.instance.collection('users').document(uid).collection('contacts').document(widget.friend.userId).collection('messages').document("${DateTime.now().toUtc().millisecondsSinceEpoch}")
-                          .setData({
-                            'message':s,
-                            'senderId': uid,
-                            'time': "${DateTime.now().toUtc().millisecondsSinceEpoch}",
-                          });
-                          Firestore.instance.collection('users').document(widget.friend.userId).collection('contacts').document(uid).collection('messages').document("${DateTime.now().toUtc().millisecondsSinceEpoch}")
+                          Firestore.instance
+                              .collection('users')
+                              .document(uid)
+                              .collection('contacts')
+                              .document(widget.friend.userId)
+                              .collection('messages')
+                              .document(
+                                  "${DateTime.now().toUtc().millisecondsSinceEpoch}")
                               .setData({
-                            'message':s,
+                            'message': s,
                             'senderId': uid,
                             'time': "${DateTime.now().toUtc().millisecondsSinceEpoch}",
+                          }).whenComplete(() {
+                            getSuggestedReplies();
                           });
+                          //smartNotif("Busy Right Now");
+                          Firestore.instance
+                              .collection('users')
+                              .document(widget.friend.userId)
+                              .collection('contacts')
+                              .document(uid)
+                              .collection('messages')
+                              .document(
+                                  "${DateTime.now().toUtc().millisecondsSinceEpoch}")
+                              .setData({
+                            'message': s,
+                            'senderId': uid,
+                            'time':
+                                "${DateTime.now().toUtc().millisecondsSinceEpoch}",
+                          }).whenComplete(() {
+                            getSuggestedReplies();
+                          });
+
+
+
                         },
 //                        onPressed: () {},
                       ),
@@ -491,7 +641,19 @@ class _MessagesListState extends State<MessagesList> {
             ),
             SizedBox(
               height: 20.0,
-            )
+            ),
+            /*FlatButton(onPressed: (){
+              dynamic conversationObject = {
+                'appId': '1ef7a8d336d1527c77a03d7190821dc67',// The [APP_ID](https://dashboard.kommunicate.io/settings/install) obtained from kommunicate dashboard.
+              };
+
+              KommunicateFlutterPlugin.buildConversation(conversationObject)
+                  .then((clientConversationId) {
+                print("Conversation builder success : " + clientConversationId.toString());
+              }).catchError((error) {
+                print("Conversation builder error : " + error.toString());
+              });
+            }, child: Text("ChatBot")),*/
           ],
         );
       } else {

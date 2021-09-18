@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/AudioCall/audioIndex.dart';
 import 'package:chat/utils/functions.dart';
 import 'package:chat/videoCall/index.dart';
@@ -12,6 +13,7 @@ import 'package:chat/models/user.dart';
 import 'package:chat/view/messages/widgets/back_icon.dart';
 import 'package:chat/view/utils/device_config.dart';
 import 'package:chat/view/widgets/avatar_icon.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 class MessagesHeader extends StatefulWidget {
   final User friend;
@@ -36,6 +38,17 @@ class _MessagesHeaderState extends State<MessagesHeader> {
   void initState() {
     getUserId();
     super.initState();
+  }
+  void smartNotif(String smartMsg) async {
+    FlutterRingtonePlayer.playNotification();
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1,
+        channelKey: "key1",
+        title: widget.friend.name,
+        body: "I am ${smartMsg} talk to you later",
+      ),
+    );
   }
 
   @override
@@ -111,6 +124,9 @@ class _MessagesHeaderState extends State<MessagesHeader> {
                           Text(userDocument['status'], style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
                         }
                         var userDocument = snapshot.data;
+                        /*if(userDocument['status'] != "Online" && userDocument['status'] != "Typing..."){
+                          smartNotif("Busy Right Now");
+                        }*/
                         return Text(userDocument['status'], style: kArialFontStyle.copyWith( fontSize: deviceData.screenHeight * 0.014, color: Colors.white, ), );
                       }
                   ),

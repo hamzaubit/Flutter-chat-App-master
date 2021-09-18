@@ -26,6 +26,7 @@ class _audioCallPageState extends State<audioCallPage> {
   final _infoStrings = <String>[];
   bool muted = false;
   RtcEngine _engine;
+  bool mic = false;
 
   @override
   void dispose() {
@@ -186,6 +187,14 @@ class _audioCallPageState extends State<audioCallPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          GestureDetector(
+            onTap: (){
+              setState(() {
+                mic =! mic;
+              });
+            },
+              child: mic  ? Icon(Icons.headset_mic,color: Colors.white,) : Icon(Icons.headset_mic,color: Colors.blue,)
+          ),
           RawMaterialButton(
             onPressed: _onToggleMute,
             child: Icon(
