@@ -39,7 +39,7 @@ class _MessagesHeaderState extends State<MessagesHeader> {
     getUserId();
     super.initState();
   }
-  void smartNotif(String smartMsg) async {
+  /*void smartNotif(String smartMsg) async {
     FlutterRingtonePlayer.playNotification();
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -49,7 +49,7 @@ class _MessagesHeaderState extends State<MessagesHeader> {
         body: "I am ${smartMsg} talk to you later",
       ),
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -149,10 +149,10 @@ class _MessagesHeaderState extends State<MessagesHeader> {
                 color: Colors.white,
               ),
               child: Icon(
-              Icons.phone,
-              color: Color(0xFF4B0082),
-              size: deviceData.screenWidth * 0.058,
-            ),
+                Icons.phone,
+                color: Color(0xFF4B0082),
+                size: deviceData.screenWidth * 0.058,
+              ),
             ),
           ),
           SizedBox(width: deviceData.screenWidth * 0.020),

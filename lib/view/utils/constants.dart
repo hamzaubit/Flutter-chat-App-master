@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+const oneSignalAppId = "cd765b20-6d29-4295-9604-78b2eb52d54d";
 const kBackgroundColor = Color(0xFF4B0082);
 
 const kBackgroundButtonColor = Color(0xFF4B0082);

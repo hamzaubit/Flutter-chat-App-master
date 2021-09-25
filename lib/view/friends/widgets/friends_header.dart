@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 
 
@@ -47,7 +48,6 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   String _timeString;
   String fcmToken;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  String oneSignalAppId = "36ea0ab1-4b23-4a4a-b5f0-c78ef4dc76b5";
   String MyName;
 
   void _getTime() {
@@ -57,8 +57,12 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       _timeString = formattedDateTime;
     });
   }
+  void configOneSignel()
+  {
+    OneSignal.shared.setAppId(oneSignalAppId);
+  }
 
-  void hearRain() async {
+  /*void hearRain() async {
     DocumentReference documentReference = Firestore.instance.collection("heartStatus").document(uid);
     Map<String , dynamic> userStatus = {
       "heartValue": "",
@@ -67,7 +71,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     {
       print("Heart Created");
     });
-  }
+  }*/
 
   /*callingNotif(String callerName) async {
     DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
@@ -86,7 +90,8 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     return DateFormat('h:mm a | d MMM').format(dateTime);
   }
 
-  void _startTimer(String status) {
+  void _startTimer(String status) async {
+
     _counter = 1;
     if (_timer != null) {
       _timer.cancel();
@@ -99,7 +104,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
           _timer.cancel();
           print("Created");
           //fcmTokenForNotification(fcmToken);
-          hearRain();
+          //hearRain();
           DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
           Map<String , dynamic> userStatus = {
             "status": status,
@@ -109,7 +114,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
           {
             print("Status Created");
           });
-          messageStatusCollection();
+          //messageStatusCollection();
         }
       });
     });
@@ -121,17 +126,15 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     print("User Id : "+uid.toString());
   }
 
-  createData(String status){
-    DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
-    Map<String , dynamic> userStatus = {
-      "status": status,
-      "token": fcmToken,
-    };
-    documentReference.setData(userStatus).whenComplete(()
-    {
-      print("Status Created");
-    });
+  updateData(String status){
+    final firestoreInstance = Firestore.instance;
+    firestoreInstance
+    .collection("userStatus").document(uid).updateData(
+        {"status": status,}).then((_) {
+          print("Status Updated");
+        });
   }
+
   /*fcmTokenForNotification(String status){
     DocumentReference documentReference = Firestore.instance.collection("userStatus").document(uid);
     Map<String , dynamic> userStatus = {
@@ -147,7 +150,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     OneSignal.shared
         .setAppId(oneSignalAppId);
   }*/
-  void notifyMessage(String senderName) async {
+  /*void notifyMessage(String senderName) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1,
@@ -157,8 +160,8 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
         displayOnBackground: true,
       ),
     );
-  }
-  void messageStatusCollection() async {
+  }*/
+  /*void messageStatusCollection() async {
     DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(uid);
     Map<String , dynamic> userStatus = {
       "message": false,
@@ -168,7 +171,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     {
       print("Status Created");
     });
-  }
+  }*/
 
   void initState(){
     //configOneSignel();
@@ -176,6 +179,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       fcmToken = token;
       print("My Token :" +fcmToken);
     });
+    configOneSignel();
     _timeString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
@@ -187,16 +191,16 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if(state == AppLifecycleState.resumed){
-      createData("Online");
+      updateData("Online");
     }
     else{
-      createData(_timeString.toString());
+      updateData(_timeString.toString());
     }
   }
 
   @override
   void dispose(){
-    createData("Offline");
+    updateData("Offline");
   }
 
   @override
@@ -211,7 +215,7 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          uid == null ? Container() :
+          /*uid == null ? Container() :
           StreamBuilder(
               stream: Firestore.instance.collection('messageStatus').document(uid).snapshots(),
               builder: (context, snapshot) {
@@ -234,8 +238,8 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
                   return Container();
                 }
                 return Container();
-              }),
-         /* uid == null ? Container() : StreamBuilder(
+              }),*/
+          /* uid == null ? Container() : StreamBuilder(
               stream: Firestore.instance.collection('users').document(uid).snapshots(),
               builder: (context, snapshot){
                 if (!snapshot.hasData) {
@@ -292,25 +296,3 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     );
   }
 }
-
-
-/*showDialog(context: context, builder: (_) => AlertDialog(
-title: Icon(Icons.phone,color: Colors.white,size: deviceData.screenWidth * 0.08,),
-actions: [
-Center(child: Text("Hunain Ali is Calling",style: TextStyle(color: Colors.white,fontSize: deviceData.screenWidth * 0.05),)),
-SizedBox(height: deviceData.screenHeight * 0.02,),
-CupertinoDialogAction(child: GestureDetector(
-onTap: (){
-//Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage(friendId: widget.friend.userId,)));
-},
-child: Text("Receive",style: TextStyle(color: Colors.white,fontSize: deviceData.screenWidth * 0.05),)),),
-SizedBox(height: deviceData.screenHeight * 0.02,),
-CupertinoDialogAction(child: GestureDetector(
-onTap: (){
-Navigator.pop(context);
-},
-child: Text("Cancel",style: TextStyle(color: Colors.red,fontSize: deviceData.screenWidth * 0.05),)),)
-],
-elevation: 10.0,
-backgroundColor: Colors.deepPurple.withOpacity(0.2),
-));*/

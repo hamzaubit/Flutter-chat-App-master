@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/view/messages/bloc/messages_bloc.dart';
 import 'package:chat/view/utils/constants.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'package:http/http.dart';
 
 class SendIcon extends StatefulWidget {
 
@@ -32,6 +35,7 @@ class SendIcon extends StatefulWidget {
 }
 
 class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
+
   bool changeStatus = true;
   String uid;
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -40,7 +44,35 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
   String _timeString;
   String fcmToken;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  int _start = 10;
+  String token;
+
+  /*Future<Response> sendNotification(List<String> tokenIdList, String contents, String heading) async{
+    return await post(
+      Uri.parse('https://onesignal.com/api/v1/notifications'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>
+      {
+        "app_id": oneSignalAppId,//kAppId is the App Id that one get from the OneSignal When the application is registered.
+
+        "include_player_ids": tokenIdList,//tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
+
+        // android_accent_color reprsent the color of the heading text in the notifiction
+        "android_accent_color":"FF9976D2",
+
+        //"small_icon":"ic_stat_onesignal_default",
+
+        "large_icon":"https://firebasestorage.googleapis.com/v0/b/smartchat-1a8c8.appspot.com/o/appLogo.png?alt=media&token=57e8567d-f244-4b17-861d-e0fea5f1be5f",
+
+        "headings": {"en": heading},
+
+        "contents": {"en": contents},
+
+
+      }),
+    );
+  }*/
 
   void startTimer() {
     int count = 30;
@@ -71,7 +103,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
   }
 
 
-  void messageNotifData(bool message , String senderName){
+  /*void messageNotifData(bool message , String senderName){
     DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(widget.friendId);
     Map<String , dynamic> userStatus = {
       "message": message,
@@ -81,7 +113,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
     {
       print("Message Notif Created");
     });
-  }
+  }*/
 
   void _getTime() {
     final DateTime now = DateTime.now();
@@ -115,7 +147,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
           };
           documentReference.setData(userStatus).whenComplete(() {
             print("Status Created");
-            messageNotifData(false,"");
+            //messageNotifData(false,"");
           });
         }
       });
@@ -152,8 +184,18 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
       print("Status Created");
     });
   }
+
+  /*getToken(){
+    final firestoreInstance = Firestore.instance;
+    firestoreInstance.collection("userStatus").document(widget.friendId).get().then((value){
+      token = value.data["token"];
+      print(token);
+    });
+  }*/
+
   @override
   void initState() {
+    //getToken();
     _firebaseMessaging.getToken().then((token) {
       fcmToken = token;
       print("My Token :" + fcmToken);
@@ -185,6 +227,9 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
             if (widget.controller.text.trim().isNotEmpty) {
               createData("Online");
               conditonalMethod(true);
+              /*sendNotification(['ewq8cBks23k:APA91bFWLTaAGR-qb63R2GjweoqLLsynWagYJYX5jd7DCY0T52nsY2cg7iBs8Nxd04TYSBv3Q7o47JdnW3dpq0jHy3pddadWkq_MSXgWZTVEupSuTKT7h4OZCQe3ZGPBwCX7oocRyHAI'],
+                  widget.controller.text,
+                  widget.myName);*/
               /*final firestoreInstance = Firestore.instance;
               firestoreInstance.collection("messageStatus").document(uid).get().then((value){
                 if(value.data["message"] == true){
@@ -195,8 +240,8 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
                   print(value.data);
                 }
               });*/
-              messageNotifData(true,widget.myName);
-              DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(widget.friendId);
+              //messageNotifData(true,widget.myName);
+              /*DocumentReference documentReference = Firestore.instance.collection("messageStatus").document(widget.friendId);
               Map<String , dynamic> userStatus = {
                 "message": false,
                 "messageSender": widget.myName,
@@ -204,7 +249,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
               documentReference.setData(userStatus).whenComplete(()
               {
                 print("Message Notif Created");
-              });
+              });*/
               BlocProvider.of<MessagesBloc>(context).add(
                   MessageSent(message: widget.controller.text, friendId: widget.friendId));
           Timer(Duration(seconds: 1),(){

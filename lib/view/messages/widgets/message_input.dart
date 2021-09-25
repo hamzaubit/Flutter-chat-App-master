@@ -61,14 +61,11 @@ class _MessageInputState extends State<MessageInput>
         } else {
           _timer.cancel();
           print("Created");
-          DocumentReference documentReference =
-              Firestore.instance.collection("userStatus").document(uid);
-          Map<String, dynamic> userStatus = {
-            "status": status,
-            "token": fcmToken,
-          };
-          documentReference.setData(userStatus).whenComplete(() {
-            print("Status Created");
+          final firestoreInstance = Firestore.instance;
+          firestoreInstance
+              .collection("userStatus").document(uid).updateData(
+              {"status": status,}).then((_) {
+            print("Status Updated");
           });
         }
       });
@@ -82,15 +79,11 @@ class _MessageInputState extends State<MessageInput>
   }
 
   createData(String status) {
-    print("Created");
-    DocumentReference documentReference =
-        Firestore.instance.collection("userStatus").document(uid);
-    Map<String, dynamic> userStatus = {
-      "status": status,
-      "token": fcmToken,
-    };
-    documentReference.setData(userStatus).whenComplete(() {
-      print("Status Created");
+    final firestoreInstance = Firestore.instance;
+    firestoreInstance
+        .collection("userStatus").document(uid).updateData(
+        {"status": status,}).then((_) {
+      print("Status Updated");
     });
   }
 
@@ -109,14 +102,14 @@ class _MessageInputState extends State<MessageInput>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  /*void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       //createData("Online");
       print("Online");
     } else {
       createData(_timeString.toString());
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +120,7 @@ class _MessageInputState extends State<MessageInput>
         Radius.circular(deviceData.screenWidth * 0.05),
       ),
       child: Container(
-        width: deviceData.screenWidth * 0.60,
+        width: deviceData.screenWidth * 0.70,
         child: TextField(
           textCapitalization: TextCapitalization.sentences,
           controller: widget.controller,

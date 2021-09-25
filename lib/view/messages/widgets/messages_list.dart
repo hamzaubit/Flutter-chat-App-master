@@ -53,7 +53,7 @@ class _MessagesListState extends State<MessagesList> {
   String MyName;
   List<String> _suggestedReplies = [];
   List<String> getLastMsg = [];
-
+  String token;
   // Platform messages are asynchronous, so we initialize in an async method.
 
   List<TextMessage> textMessageLists = [];
@@ -96,16 +96,16 @@ class _MessagesListState extends State<MessagesList> {
     print("Friend Id : " + widget.friend.userId);
   }
 
-  void hearRain(bool heartRain) async {
+  /*void hearRain(bool heartRain) async {
     DocumentReference documentReference =
-        Firestore.instance.collection("heartStatus").document(uid);
+    Firestore.instance.collection("heartStatus").document(uid);
     Map<String, dynamic> userStatus = {
       "heartValue": heartRain,
     };
     documentReference.setData(userStatus).whenComplete(() {
       print("Heart Created");
     });
-  }
+  }*/
 
   @override
   void initState() {
@@ -119,7 +119,7 @@ class _MessagesListState extends State<MessagesList> {
 
   void _scrollListener() {
     if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange &&
         !noMoreMessages) {
       context.bloc<MessagesBloc>().add(MoreMessagesFetched(
@@ -127,7 +127,7 @@ class _MessagesListState extends State<MessagesList> {
     }
   }
 
-  void notifyCalling(String senderName, String callingType) async {
+  /*void notifyCalling(String senderName, String callingType) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1,
@@ -137,7 +137,7 @@ class _MessagesListState extends State<MessagesList> {
         displayOnBackground: true,
       ),
     );
-  }
+  }*/
 
   void _startTimer() {
     _counter = 1;
@@ -151,14 +151,14 @@ class _MessagesListState extends State<MessagesList> {
         } else {
           _timer.cancel();
           print("Created");
-          messageNotifData(false, "");
+          //messageNotifData(false, "");
           //fcmTokenForNotification(fcmToken);
         }
       });
     });
   }
 
-  void messageNotifData(bool message, String senderName) {
+  /*void messageNotifData(bool message, String senderName) {
     DocumentReference documentReference = Firestore.instance
         .collection("messageStatus")
         .document(widget.friend.userId);
@@ -169,9 +169,9 @@ class _MessagesListState extends State<MessagesList> {
     documentReference.setData(userStatus).whenComplete(() {
       print("Message Notif Created");
     });
-  }
+  }*/
 
-  void notify() async {
+  /*void notify() async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1,
@@ -180,8 +180,8 @@ class _MessagesListState extends State<MessagesList> {
         body: "${widget.friend.name} \n is typing...",
       ),
     );
-  }
-  void smartNotif(String smartMsg) async {
+  }*/
+  /*void smartNotif(String smartMsg) async {
     FlutterRingtonePlayer.playNotification();
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -191,7 +191,7 @@ class _MessagesListState extends State<MessagesList> {
         body: "I am ${smartMsg} talk to you later",
       ),
     );
-  }
+  }*/
 
 
   @override
@@ -206,27 +206,27 @@ class _MessagesListState extends State<MessagesList> {
     DeviceData deviceData = DeviceData.init(context);
     return BlocConsumer<MessagesBloc, MessagesState>(
         listener: (context, state) {
-      _mapStateToActions(state);
-    }, builder: (_, state) {
+          _mapStateToActions(state);
+        }, builder: (_, state) {
       if (messages != null) {
         return Column(
           children: [
-            uid == null
+            /*uid == null
                 ? Container()
                 : StreamBuilder(
-                    stream: Firestore.instance
-                        .collection('callingNotif')
-                        .document(uid)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Container();
-                      }
-                      var userDocument = snapshot.data;
-                      if (userDocument['audioCall'] == true) {
-                        notifyCalling(
-                            "Audio Calling", userDocument['callerName']);
-                        /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
+                stream: Firestore.instance
+                    .collection('callingNotif')
+                    .document(uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container();
+                  }
+                  var userDocument = snapshot.data;
+                  if (userDocument['audioCall'] == true) {
+                    notifyCalling(
+                        "Audio Calling", userDocument['callerName']);
+                    *//*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
                Map<String , dynamic> userStatus = {
                  "videoCall": false,
                  "callerName": "",
@@ -235,17 +235,17 @@ class _MessagesListState extends State<MessagesList> {
                documentReference.setData(userStatus).whenComplete(()
                {
                  print("Call Status Created");
-               });*/
-                        FlutterRingtonePlayer.playRingtone();
-                        /*AwesomeNotifications().actionStream.listen((receivedNotifiction){
+               });*//*
+                    FlutterRingtonePlayer.playRingtone();
+                    *//*AwesomeNotifications().actionStream.listen((receivedNotifiction){
                  //Navigator.push(context, MaterialPageRoute(builder: (context) => audioIndexPage()));
                  Navigator.pushNamed(context, '/audioCallingPage' );
-               });*/
-                        return Container();
-                      } else if (userDocument['videoCall'] == true) {
-                        notifyCalling(
-                            "Video Calling", userDocument['callerName']);
-                        /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
+               });*//*
+                    return Container();
+                  } else if (userDocument['videoCall'] == true) {
+                    notifyCalling(
+                        "Video Calling", userDocument['callerName']);
+                    *//*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(uid);
                Map<String , dynamic> userStatus = {
                  "videoCall": false,
                  "callerName": "",
@@ -254,137 +254,135 @@ class _MessagesListState extends State<MessagesList> {
                documentReference.setData(userStatus).whenComplete(()
                {
                  print("Call Status Created");
-               });*/
-                        FlutterRingtonePlayer.playRingtone();
-                        /*AwesomeNotifications().actionStream.listen((receivedNotifiction){
+               });*//*
+                    FlutterRingtonePlayer.playRingtone();
+                    *//*AwesomeNotifications().actionStream.listen((receivedNotifiction){
                  Navigator.pushNamed(context, '/videoCallingPage' );
-                 */ /*Navigator.of(context).pushNamed(
+                 *//* *//*Navigator.of(context).pushNamed(
                    '/videoCallingPage',
-                 );*/ /*
-               });*/
-                        return Container();
-                      } else {
-                        return Container();
-                      }
-                    }),
-            uid == null
+                 );*//* *//*
+               });*//*
+                    return Container();
+                  } else {
+                    return Container();
+                  }
+                }),*/
+            /*uid == null
                 ? Container()
                 : StreamBuilder(
-                    stream: Firestore.instance
-                        .collection('users')
-                        .document(uid)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Container();
-                      }
-                      var userDocument = snapshot.data;
-                      MyName = userDocument['name'];
-                      DocumentReference documentReference = Firestore.instance
-                          .collection("callingNotif")
-                          .document(widget.friend.userId);
-                      Map<String, dynamic> userStatus = {
-                        "videoCall": false,
-                        "callerName": MyName,
-                        "audioCall": false,
-                      };
-                      documentReference.setData(userStatus).whenComplete(() {
-                        print("Call Status Created");
-                      });
-                      print(MyName);
-                      return Container();
-                    }),
+                stream: Firestore.instance
+                    .collection('users')
+                    .document(uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container();
+                  }
+                  var userDocument = snapshot.data;
+                  MyName = userDocument['name'];
+                  DocumentReference documentReference = Firestore.instance
+                      .collection("callingNotif")
+                      .document(widget.friend.userId);
+                  Map<String, dynamic> userStatus = {
+                    "videoCall": false,
+                    "callerName": MyName,
+                    "audioCall": false,
+                  };
+                  documentReference.setData(userStatus).whenComplete(() {
+                    print("Call Status Created");
+                  });
+                  print(MyName);
+                  return Container();
+                }),*/
             Expanded(
               child: Stack(
                 children: [
                   Padding(
                     padding:
-                        EdgeInsets.only(bottom: deviceData.screenHeight * 0.01),
+                    EdgeInsets.only(bottom: deviceData.screenHeight * 0.01),
                     child: messages.length < 1
                         ? Container(
-                            child: Center(
-                                child: Text("No messages yet ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: deviceData.screenHeight * 0.019,
-                                      color: kBackgroundButtonColor,
-                                    ))),
-                          )
+                      child: Center(
+                          child: Text("No messages yet ",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: deviceData.screenHeight * 0.019,
+                                color: kBackgroundButtonColor,
+                              ))),
+                    )
                         : Stack(
-                            children: [
-                              ListView.builder(
-                                  controller: _scrollController,
-                                  reverse: true,
-                                  itemCount: messages.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
+                      children: [
+                        ListView.builder(
+                            controller: _scrollController,
+                            reverse: true,
+                            itemCount: messages.length,
+                            itemBuilder:
+                                (BuildContext context, int index) {
 
-                                    final message = messages[index];
-                                    if(index == 0)
-                                      getSuggestedReplies();
-
-
-                                    return MessageItem(
-                                      showFriendImage:
-                                          _showFriendImage(message, index),
-                                      friend: widget.friend,
-                                      message: message.message,
-                                      senderId: message.senderId,
-                                      imagePic: url,
-                                      //yahn time or date show krwana hai database ki mada se
-                                    );
-                                  }),
-                              heartRain
-                                  ? Container(
-                                      height: deviceData.screenHeight * 0.8,
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/images/heart.gif'),
-                                          )),
-                                    )
-                                  : Container(),
-                              StreamBuilder(
-                                  stream: Firestore.instance
-                                      .collection('heartStatus')
-                                      .document(widget.friend.userId)
-                                      .snapshots(),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return Container();
-                                    }
-                                    var userDocument = snapshot.data;
-                                    if (userDocument['heartValue'] == true) {
-                                      return Container(
-                                        height: deviceData.screenHeight * 0.8,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                            color: Colors.transparent,
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/heart.gif'),
-                                            )),
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  }),
-                            ],
-                          ),
+                              final message = messages[index];
+                              if(index == 0)
+                                getSuggestedReplies();
+                              return MessageItem(
+                                showFriendImage:
+                                _showFriendImage(message, index),
+                                friend: widget.friend,
+                                message: message.message,
+                                senderId: message.senderId,
+                                imagePic: url,
+                                //yahn time or date show krwana hai database ki mada se
+                              );
+                            }),
+                        /*heartRain
+                            ? Container(
+                          height: deviceData.screenHeight * 0.8,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/images/heart.gif'),
+                              )),
+                        )
+                            : Container(),
+                        StreamBuilder(
+                            stream: Firestore.instance
+                                .collection('heartStatus')
+                                .document(widget.friend.userId)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return Container();
+                              }
+                              var userDocument = snapshot.data;
+                              if (userDocument['heartValue'] == true) {
+                                return Container(
+                                  height: deviceData.screenHeight * 0.8,
+                                  width:
+                                  MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/heart.gif'),
+                                      )),
+                                );
+                              } else {
+                                return Container();
+                              }
+                            }),*/
+                      ],
+                    ),
                   ),
                   state is MoreMessagesLoading
                       ? Padding(
-                          padding: EdgeInsets.only(
-                              top: deviceData.screenHeight * 0.01),
-                          child: Align(
-                              alignment: Alignment.topCenter,
-                              child: const CircleProgress(
-                                radius: 0.035,
-                              )),
-                        )
+                    padding: EdgeInsets.only(
+                        top: deviceData.screenHeight * 0.01),
+                    child: Align(
+                        alignment: Alignment.topCenter,
+                        child: const CircleProgress(
+                          radius: 0.035,
+                        )),
+                  )
                       : SizedBox.shrink()
                 ],
               ),
@@ -394,7 +392,7 @@ class _MessagesListState extends State<MessagesList> {
                 SizedBox(
                   width: deviceData.screenWidth * 0.06,
                 ),
-                StreamBuilder(
+                /*StreamBuilder(
                     stream: Firestore.instance
                         .collection('userStatus')
                         .document(widget.friend.userId)
@@ -405,7 +403,7 @@ class _MessagesListState extends State<MessagesList> {
                       }
                       var userDocument = snapshot.data;
                       if (userDocument['status'] == "Typing...") {
-                        notify();
+                        //notify();
                         final firestoreInstance = Firestore.instance;
                         firestoreInstance.collection('users')
                             .document(widget.friend.userId)
@@ -414,7 +412,7 @@ class _MessagesListState extends State<MessagesList> {
                             .collection('messages')
                             .document(
                             "${DateTime.now().toUtc().millisecondsSinceEpoch}").get().then((value) => {
-                           //print("Mera Last Message Yeh Hai : ${value.data.values.last}"),
+                          //print("Mera Last Message Yeh Hai : ${value.data.values.last}"),
                           getLastMsg = value.data.values.last,
                           print("Mera Last Message Yeh Hai : ${getLastMsg}"),
                         });
@@ -424,17 +422,17 @@ class _MessagesListState extends State<MessagesList> {
                           width: deviceData.screenWidth * 0.15,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                            image: AssetImage('assets/images/typing.gif'),
-                            fit: BoxFit.cover,
-                          )),
+                                image: AssetImage('assets/images/typing.gif'),
+                                fit: BoxFit.cover,
+                              )),
                         );
                       }
                       return Container(
                         width: deviceData.screenWidth * 0.15,
                       );
-                    }),
+                    }),*/
                 SizedBox(
-                  width: deviceData.screenWidth * 0.23,
+                  width: deviceData.screenWidth * 0.40,
                 ),
                 StreamBuilder(
                     stream: Firestore.instance
@@ -455,9 +453,9 @@ class _MessagesListState extends State<MessagesList> {
                             width: deviceData.screenWidth * 0.1,
                             decoration: BoxDecoration(
                                 image: DecorationImage(
-                              image: AssetImage('assets/images/seenPic.gif'),
-                              fit: BoxFit.cover,
-                            )),
+                                  image: AssetImage('assets/images/seenPic.gif'),
+                                  fit: BoxFit.cover,
+                                )),
                           ),
                         );
                       }
@@ -468,9 +466,9 @@ class _MessagesListState extends State<MessagesList> {
                           width: deviceData.screenWidth * 0.095,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                            image: AssetImage('assets/images/unseen.png'),
-                            fit: BoxFit.cover,
-                          )),
+                                image: AssetImage('assets/images/unseen.png'),
+                                fit: BoxFit.cover,
+                              )),
                         ),
                       );
                     }),
@@ -485,7 +483,7 @@ class _MessagesListState extends State<MessagesList> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  GestureDetector(
+                  /*GestureDetector(
                     onTap: () {
                       setState(() {
                         heartRain = !heartRain;
@@ -500,26 +498,26 @@ class _MessagesListState extends State<MessagesList> {
                       child: InkResponse(
                         child: heartRain
                             ? Icon(
-                                Icons.favorite_outlined,
-                                color: kBackgroundButtonColor,
-                                size: deviceData.screenWidth * 0.065,
-                              )
+                          Icons.favorite_outlined,
+                          color: kBackgroundButtonColor,
+                          size: deviceData.screenWidth * 0.065,
+                        )
                             : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    heartRain = !heartRain;
-                                    hearRain(heartRain);
-                                  });
-                                },
-                                child: Icon(
-                                  Icons.favorite_outline,
-                                  color: kBackgroundButtonColor,
-                                  size: deviceData.screenWidth * 0.065,
-                                ),
-                              ),
+                          onTap: () {
+                            setState(() {
+                              heartRain = !heartRain;
+                              hearRain(heartRain);
+                            });
+                          },
+                          child: Icon(
+                            Icons.favorite_outline,
+                            color: kBackgroundButtonColor,
+                            size: deviceData.screenWidth * 0.065,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ),*/
                   MessageInput(controller: _textController),
                   SizedBox(
                     width: deviceData.screenHeight * 0.010,
@@ -530,10 +528,10 @@ class _MessagesListState extends State<MessagesList> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => mediaMessageScreen(
-                                    userName: widget.friend.name,
-                                    userId: widget.friend.userId,
-                                    myId: uid,
-                                  )));
+                                userName: widget.friend.name,
+                                userId: widget.friend.userId,
+                                myId: uid,
+                              )));
                     },
                     child: Container(
                       padding: EdgeInsets.only(
@@ -551,6 +549,7 @@ class _MessagesListState extends State<MessagesList> {
                   ),
                   GestureDetector(
                     onTap: (){
+                      print("Method CHalega");
                       /*StreamBuilder(
                           stream: Firestore.instance
                               .collection('userStatus')
@@ -604,7 +603,7 @@ class _MessagesListState extends State<MessagesList> {
                               .document(widget.friend.userId)
                               .collection('messages')
                               .document(
-                                  "${DateTime.now().toUtc().millisecondsSinceEpoch}")
+                              "${DateTime.now().toUtc().millisecondsSinceEpoch}")
                               .setData({
                             'message': s,
                             'senderId': uid,
@@ -620,12 +619,12 @@ class _MessagesListState extends State<MessagesList> {
                               .document(uid)
                               .collection('messages')
                               .document(
-                                  "${DateTime.now().toUtc().millisecondsSinceEpoch}")
+                              "${DateTime.now().toUtc().millisecondsSinceEpoch}")
                               .setData({
                             'message': s,
                             'senderId': uid,
                             'time':
-                                "${DateTime.now().toUtc().millisecondsSinceEpoch}",
+                            "${DateTime.now().toUtc().millisecondsSinceEpoch}",
                           }).whenComplete(() {
                             getSuggestedReplies();
                           });
@@ -646,7 +645,6 @@ class _MessagesListState extends State<MessagesList> {
               dynamic conversationObject = {
                 'appId': '1ef7a8d336d1527c77a03d7190821dc67',// The [APP_ID](https://dashboard.kommunicate.io/settings/install) obtained from kommunicate dashboard.
               };
-
               KommunicateFlutterPlugin.buildConversation(conversationObject)
                   .then((clientConversationId) {
                 print("Conversation builder success : " + clientConversationId.toString());
@@ -702,4 +700,3 @@ class _MessagesListState extends State<MessagesList> {
     }
   }
 }
-
