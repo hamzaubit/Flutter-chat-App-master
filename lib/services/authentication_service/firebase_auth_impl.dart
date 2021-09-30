@@ -44,7 +44,7 @@ class FirebaseAuthImpl extends AuthenticationRepository {
   }
 
   @override
-  Future<User> signUp({String username, String email, String password}) async {
+  Future<User> signUp({String username, String email, String password, String tokenId}) async {
     try {
       final authResult = await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -55,6 +55,7 @@ class FirebaseAuthImpl extends AuthenticationRepository {
         email: email,
         imageType: ImageType.assets,
         imgUrl: photoUrl,
+        tokenId: tokenId
       );
       //await storageRepository.saveProfileUser(user);
       return user;

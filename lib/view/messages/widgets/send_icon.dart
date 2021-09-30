@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:chat/notification/notification_service.dart';
 import 'package:chat/view/messages/bloc/messages_bloc.dart';
 import 'package:chat/view/utils/constants.dart';
 import 'package:chat/view/utils/device_config.dart';
@@ -45,35 +46,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
   String fcmToken;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String token;
-
-  /*Future<Response> sendNotification(List<String> tokenIdList, String contents, String heading) async{
-    return await post(
-      Uri.parse('https://onesignal.com/api/v1/notifications'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>
-      {
-        "app_id": oneSignalAppId,//kAppId is the App Id that one get from the OneSignal When the application is registered.
-
-        "include_player_ids": tokenIdList,//tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
-
-        // android_accent_color reprsent the color of the heading text in the notifiction
-        "android_accent_color":"FF9976D2",
-
-        //"small_icon":"ic_stat_onesignal_default",
-
-        "large_icon":"https://firebasestorage.googleapis.com/v0/b/smartchat-1a8c8.appspot.com/o/appLogo.png?alt=media&token=57e8567d-f244-4b17-861d-e0fea5f1be5f",
-
-        "headings": {"en": heading},
-
-        "contents": {"en": contents},
-
-
-      }),
-    );
-  }*/
-
+  
   void startTimer() {
     int count = 30;
     const oneSec = const Duration(seconds: 1);
@@ -83,7 +56,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
         if (count == 0) {
           setState(() {
             timer.cancel();
-            smartNotif();
+            //smartNotif();
           });
         } else {
           setState(() {
@@ -154,17 +127,6 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
     });
   }
 
-  void smartNotif() async {
-    FlutterRingtonePlayer.playNotification();
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 1,
-        channelKey: "key1",
-        title: "${widget.friendName}",
-        body: "I Am Busy Right Now, Talk To You Later.",
-      ),
-    );
-  }
 
   void getUserId() async {
     final FirebaseUser user = await auth.currentUser();
@@ -227,6 +189,9 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
             if (widget.controller.text.trim().isNotEmpty) {
               createData("Online");
               conditonalMethod(true);
+              Firestore.instance.collection('users').document(widget.friendId).get().then((value){
+                NotificationService().sendNotification([value.data['tokenId']], 'You have a new message', 'New Message');
+              });
               /*sendNotification(['ewq8cBks23k:APA91bFWLTaAGR-qb63R2GjweoqLLsynWagYJYX5jd7DCY0T52nsY2cg7iBs8Nxd04TYSBv3Q7o47JdnW3dpq0jHy3pddadWkq_MSXgWZTVEupSuTKT7h4OZCQe3ZGPBwCX7oocRyHAI'],
                   widget.controller.text,
                   widget.myName);*/
@@ -252,9 +217,9 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
               });*/
               BlocProvider.of<MessagesBloc>(context).add(
                   MessageSent(message: widget.controller.text, friendId: widget.friendId));
-          Timer(Duration(seconds: 1),(){
+          /*Timer(Duration(seconds: 1),(){
             widget.getSuggestedReplies();
-          });
+          });*/
               /*Timer(Duration(seconds: 20),(){
                 smartNotif();
               });*/

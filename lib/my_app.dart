@@ -8,6 +8,8 @@ import 'package:chat/view/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'notification/notification_service.dart';
 import 'view/splash/widgets/splash_screen.dart';
 
 class MyApp extends StatefulWidget {
@@ -19,6 +21,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    configOneSignel();
+  }
+
+  void configOneSignel()
+  {
+    OneSignal.shared.setAppId(NotificationService.APP_ID);
   }
 
   @override
@@ -34,10 +42,6 @@ class _MyAppState extends State<MyApp> {
         //     ),
       ],
       child: MaterialApp(
-        /*routes: {
-          '/audioCallingPage' :(context)=> audioIndexPage(),
-          '/videoCallingPage' :(context)=> IndexPage(),
-        },*/
         debugShowCheckedModeBanner: false,
         darkTheme: ThemeData(
           brightness: Brightness.light,

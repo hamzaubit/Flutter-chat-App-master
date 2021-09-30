@@ -9,6 +9,7 @@ import 'package:chat/utils/failure.dart';
 import 'package:chat/utils/functions.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 part 'account_event.dart';
 part 'account_state.dart';
 
@@ -71,10 +72,14 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     } else {
       try {
         yield SignupLoading();
+        var status = await OneSignal.shared.getDeviceState();
+        String tokenId = status.userId;
+
         final user = await authImpl.signUp(
             email: event.email,
             password: event.password,
-            username: event.username);
+            username: event.username,
+            tokenId: tokenId);
         await storageRepository.saveProfileUser(user);
         yield RegisterSucceed(user);
       } on Failure catch (failure) {

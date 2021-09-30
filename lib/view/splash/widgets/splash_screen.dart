@@ -1,3 +1,4 @@
+import 'package:chat/notification/notification_service.dart';
 import 'package:chat/services/cloud_messaging_service/cloud_message_repository.dart';
 import 'package:chat/services/cloud_messaging_service/cloud_messaging_impl.dart';
 import 'package:chat/utils/failure.dart';
@@ -7,6 +8,7 @@ import 'package:chat/view/register/widgets/register_screen.dart';
 import 'package:chat/view/utils/device_config.dart';
 import 'package:chat/view/widgets/button_widget.dart';
 import 'package:chat/view/widgets/fade_in_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chat/utils/functions.dart';
@@ -23,7 +25,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-   
   }
 
   @override

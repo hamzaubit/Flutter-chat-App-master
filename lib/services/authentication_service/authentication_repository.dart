@@ -10,6 +10,7 @@ abstract class AuthenticationRepository {
     @required String username,
     @required String email,
     @required String password,
+    @required String tokenId,
   });
   Future<void> logout();
   Future<String> isSignIn();

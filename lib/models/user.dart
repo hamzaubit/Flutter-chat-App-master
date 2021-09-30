@@ -8,12 +8,14 @@ class User extends Equatable {
   final String imgUrl;
   final ImageType imageType;
   final String userId;
+  final String tokenId;
   const User({
     @required this.userId,
     @required this.name,
     @required this.email,
     @required this.imgUrl,
     @required this.imageType,
+    @required this.tokenId,
   })  : assert(name != null, 'the name must have value'),
         assert(email != null, 'the email must have value'),
         assert(imgUrl != null, 'the img url must have value'),
@@ -30,6 +32,7 @@ class User extends Equatable {
       'imgUrl': imgUrl,
       'imageType': imageType == ImageType.assets ? 'assets' : 'network',
       'userId': userId,
+      'tokenId':tokenId
     };
   }
 
@@ -43,6 +46,7 @@ class User extends Equatable {
       imageType:
           map['imageType'] == "assets" ? ImageType.assets : ImageType.network,
       userId: map['userId'],
+      tokenId: map['tokenId']
     );
   }
 }

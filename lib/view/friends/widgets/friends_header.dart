@@ -3,6 +3,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/AudioCall/audioIndex.dart';
 import 'package:chat/models/user.dart';
 import 'package:chat/videoCall/index.dart';
+import 'package:chat/videoCall/settings.dart';
 import 'package:chat/view/friends/widgets/avatar_button.dart';
 import 'package:chat/view/friends/widgets/back_icon.dart';
 import 'package:chat/view/messages/widgets/message_input.dart';
@@ -56,10 +57,6 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     setState(() {
       _timeString = formattedDateTime;
     });
-  }
-  void configOneSignel()
-  {
-    OneSignal.shared.setAppId(oneSignalAppId);
   }
 
   /*void hearRain() async {
@@ -173,13 +170,23 @@ class _FriendsHeaderState extends State<FriendsHeader> with WidgetsBindingObserv
     });
   }*/
 
+  void callingToken(){
+
+    final firestoreInstance = Firestore.instance;
+    var firebaseUser =  FirebaseAuth.instance.currentUser;
+    firestoreInstance.collection("callingToken").document("R0XURwLutS9c3dRQd5Jr").get().then((value){
+      CallToken.APP_ID = "${value.data['appID']}";
+      CallToken.Token = "${value.data['token']}";
+      print("${value.data['token']}");
+      print(value.data);
+    });
+  }
   void initState(){
-    //configOneSignel();
+    callingToken();
     _firebaseMessaging.getToken().then((token){
       fcmToken = token;
       print("My Token :" +fcmToken);
     });
-    configOneSignel();
     _timeString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();

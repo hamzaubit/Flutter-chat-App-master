@@ -128,7 +128,7 @@ class IndexState extends State<IndexPage> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: (){
-                          DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(widget.friendId);
+                          /*DocumentReference documentReference = Firestore.instance.collection("callingNotif").document(widget.friendId);
                           Map<String , dynamic> userStatus = {
                             "videoCall": true,
                             //"callerName": "",
@@ -148,7 +148,7 @@ class IndexState extends State<IndexPage> {
                           {
                             print("Call Status Created");
                           });
-                          FlutterRingtonePlayer.stop();
+                          FlutterRingtonePlayer.stop();*/
                           onJoin();
                         },
                         child: Text('Start Video Calling'),

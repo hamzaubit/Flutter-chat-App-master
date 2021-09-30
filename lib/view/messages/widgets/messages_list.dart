@@ -54,6 +54,8 @@ class _MessagesListState extends State<MessagesList> {
   List<String> _suggestedReplies = [];
   List<String> getLastMsg = [];
   String token;
+  bool isSpeaking = false;
+
   // Platform messages are asynchronous, so we initialize in an async method.
 
   List<TextMessage> textMessageLists = [];
@@ -72,7 +74,7 @@ class _MessagesListState extends State<MessagesList> {
       print(textMessageLists[i].text);
     }
 
-    print('Message');
+    print('Message',);
 
     textMessageLists = [textMessageLists[0]];
 
@@ -549,7 +551,6 @@ class _MessagesListState extends State<MessagesList> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      print("Method CHalega");
                       /*StreamBuilder(
                           stream: Firestore.instance
                               .collection('userStatus')

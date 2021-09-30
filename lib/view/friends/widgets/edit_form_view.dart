@@ -142,6 +142,8 @@ class _EditFormViewState extends State<EditFormView> {
     );
   }
 
+  //kBackgroundColor = Color(0xFF000000);
+
   Future getImage() async {
     try {
       final pickedFile =
