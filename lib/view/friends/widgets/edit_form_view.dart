@@ -133,6 +133,17 @@ class _EditFormViewState extends State<EditFormView> {
                         onSubmit(context);
                       }),
                   SizedBox(height: deviceData.screenHeight * 0.05),
+                  /*Switch(
+                    value: colorSwitch,
+                    onChanged: (value) {
+                      setState(() {
+                        colorSwitch = value;
+                        print(colorSwitch);
+                      });
+                    },
+                    activeTrackColor: kBackgroundColor,
+                    activeColor: Colors.white,
+                  ),*/
                 ],
               ),
             ),

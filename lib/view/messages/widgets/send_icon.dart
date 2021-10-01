@@ -46,6 +46,7 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
   String fcmToken;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String token;
+  String notMsg;
   
   void startTimer() {
     int count = 30;
@@ -187,10 +188,11 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
           ),
           onTap: () async {
             if (widget.controller.text.trim().isNotEmpty) {
+              notMsg = widget.controller.text;
               createData("Online");
               conditonalMethod(true);
               Firestore.instance.collection('users').document(widget.friendId).get().then((value){
-                NotificationService().sendNotification([value.data['tokenId']], 'You have a new message', 'New Message');
+                NotificationService().sendNotification([value.data['tokenId']], notMsg, widget.friendName);
               });
               /*sendNotification(['ewq8cBks23k:APA91bFWLTaAGR-qb63R2GjweoqLLsynWagYJYX5jd7DCY0T52nsY2cg7iBs8Nxd04TYSBv3Q7o47JdnW3dpq0jHy3pddadWkq_MSXgWZTVEupSuTKT7h4OZCQe3ZGPBwCX7oocRyHAI'],
                   widget.controller.text,
