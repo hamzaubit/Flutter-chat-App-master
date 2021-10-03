@@ -47,8 +47,9 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String token;
   String notMsg;
+  String name;
   
-  void startTimer() {
+  /*void startTimer() {
     int count = 30;
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
@@ -66,15 +67,15 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
         }
       },
     );
-  }
-  void conditonalMethod(bool check){
+  }*/
+  /*void conditonalMethod(bool check){
     if(check == true){
       startTimer();
     }
     else{
       FlutterRingtonePlayer.playRingtone();
     }
-  }
+  }*/
 
 
   /*void messageNotifData(bool message , String senderName){
@@ -133,6 +134,11 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
     final FirebaseUser user = await auth.currentUser();
     uid = user.uid;
     print("User Id : " + uid.toString());
+    final firestoreInstance = Firestore.instance;
+    firestoreInstance.collection("users").document(uid.toString()).get().then((value){
+      name = value.data["name"];
+      print("My Name : ${name}");
+    });
   }
 
   createData(String status) {
@@ -190,9 +196,9 @@ class _SendIconState extends State<SendIcon>  with WidgetsBindingObserver {
             if (widget.controller.text.trim().isNotEmpty) {
               notMsg = widget.controller.text;
               createData("Online");
-              conditonalMethod(true);
+              //conditonalMethod(true);
               Firestore.instance.collection('users').document(widget.friendId).get().then((value){
-                NotificationService().sendNotification([value.data['tokenId']], notMsg, widget.friendName);
+                NotificationService().sendNotification([value.data['tokenId']], notMsg, "${name}");
               });
               /*sendNotification(['ewq8cBks23k:APA91bFWLTaAGR-qb63R2GjweoqLLsynWagYJYX5jd7DCY0T52nsY2cg7iBs8Nxd04TYSBv3Q7o47JdnW3dpq0jHy3pddadWkq_MSXgWZTVEupSuTKT7h4OZCQe3ZGPBwCX7oocRyHAI'],
                   widget.controller.text,

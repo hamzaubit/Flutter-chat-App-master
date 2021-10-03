@@ -20,8 +20,6 @@ import 'package:intl/intl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
-
-
 class FriendsHeader extends StatefulWidget {
   const FriendsHeader({
     Key key,

@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.2"
+  alan_voice:
+    dependency: "direct main"
+    description:
+      name: alan_voice
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   async:
     dependency: transitive
     description:
@@ -406,6 +413,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.3"
+  package_info:
+    dependency: transitive
+    description:
+      name: package_info
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   page_transition:
     dependency: "direct main"
     description:
